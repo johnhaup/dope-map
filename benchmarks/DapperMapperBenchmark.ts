@@ -33,7 +33,10 @@ const runBenchmarkTask = (taskName: string, task: () => void) => {
   return { taskName, duration };
 };
 
-const results: ResultsMap = { Object: [], String: [] };
+const results: ResultsMap = {};
+
+const genKeyType = (type: string, iterations: number) =>
+  `${type}_${iterations}`;
 
 const updateLogFile = () => {
   const logFile = path.resolve(__dirname, "benchmark.log");
@@ -73,7 +76,13 @@ const runBenchmark = (iterationCounts: number[]) => {
       dapperDuration: number,
       nativeDuration: number
     ) => {
-      results[keyType].push({
+      const key = genKeyType(keyType, iterations);
+
+      if (!results[key]) {
+        results[key] = [];
+      }
+
+      results[key].push({
         operation,
         dapperDuration,
         nativeDuration,
@@ -191,7 +200,7 @@ const runBenchmark = (iterationCounts: number[]) => {
         </tr>
       </thead>
       <tbody>
-        ${results["Object"]
+        ${results[genKeyType("Object", iterations)]
           .map(
             ({ operation, dapperDuration, nativeDuration, overhead }, index) =>
               `<tr style="background-color: ${
@@ -207,7 +216,7 @@ const runBenchmark = (iterationCounts: number[]) => {
       </tbody>
     </table>
   </div>
-  <div style="flex: 1; min-width: 300px; max-width: 600px;">
+  <div style="flex: 1; min-width: 400px; max-width: 600px;">
     <h5>Key Type: String (${formatNumber(iterations)} iterations)</h5>
     <table style="width: 100%; border-collapse: collapse;">
       <thead>
@@ -219,7 +228,7 @@ const runBenchmark = (iterationCounts: number[]) => {
         </tr>
       </thead>
       <tbody>
-        ${results["String"]
+        ${results[genKeyType("String", iterations)]
           .map(
             ({ operation, dapperDuration, nativeDuration, overhead }, index) =>
               `<tr style="background-color: ${

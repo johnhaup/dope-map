@@ -1,24 +1,24 @@
-# Dapper Mapper
+# Dope Map
 
 A wrapper around Map for hashing complex object keys by value. This allows you to reference the same Map value using objects that are deep equal but not referentially equal.
 
 ## Installation
 
 ```bash
-yarn add dapper-mapper
+yarn add dope-map
 ```
 
 ## Usage
 
 ```javascript
-import DapMap from "dapper-mapper";
+import DopeMap from "dope-map";
 
-const dapperMap = new DapMap();
+const dopeMap = new DopeMap();
 
-dapperMap.set({ foo: "bar", to: "fu" }, [1, 2, 3, 4, 5]);
+dopeMap.set({ foo: "bar", to: "fu" }, [1, 2, 3, 4, 5]);
 
-dapperMap.get({ foo: "bar", to: "fu" }); // [1, 2, 3, 4, 5]
-dapperMap.get({ to: "fu", foo: "bar" }); // [1, 2, 3, 4, 5]
+dopeMap.get({ foo: "bar", to: "fu" }); // [1, 2, 3, 4, 5]
+dopeMap.get({ to: "fu", foo: "bar" }); // [1, 2, 3, 4, 5]
 ```
 
 ## Benchmark Results
@@ -34,7 +34,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -85,7 +85,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -141,7 +141,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -192,7 +192,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -248,7 +248,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -299,7 +299,7 @@ This library comes with performance tradeoffs, so if your main goal is performan
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>

@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "declaration": true, // Generate .d.ts files
+    "declarationDir": "./dist/types", // Output directory for type files
+    "emitDeclarationOnly": true, // Only emit .d.ts files during this step
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
+    "importHelpers": false,
     "skipLibCheck": true
   },
   "include": ["src/**/*.ts"],

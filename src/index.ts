@@ -1,69 +1,98 @@
-import hash from "hash-it";
+import hashIt from "hash-it";
 
-type KeyType =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | object
-  | Array<any>;
+type DopeKey = any;
 
-type KeyValue<T> = {
-  key: string | number | boolean | null | undefined | object | Array<any>;
-  value: T;
-};
+interface DopeMapConfig {
+  /**
+   *  Optional custom hash function
+   */
+  hashFunction?: Function;
+}
 
-const primitiveKeySet = new Set(["string", "number", "boolean"]);
+export default class DopeMap<V> {
+  private dopeMap: Map<string, V>;
+  private hashFunction: Function = hashIt;
 
-export default class DapperMapper<T> {
-  private map: Map<string, { key: KeyType; value: T }>;
-
-  constructor() {
-    this.map = new Map<string, KeyValue<T>>();
+  constructor(config: DopeMapConfig = {}) {
+    this.validateHashFunction(config.hashFunction);
+    this.dopeMap = new Map();
   }
 
-  private static getHashedKey(key: any): string {
-    if (primitiveKeySet.has(typeof key) || key === null) {
-      return key; // Use the primitive key as is
+  private validateHashFunction(fn?: Function) {
+    if (fn) {
+      if (typeof fn !== "function") {
+        throw new Error(
+          "[DOPE] Provided hashFunction must be a function.  Not dope!"
+        );
+      }
+
+      this.hashFunction = fn;
     }
-    return `dapper:${hash(key)}`; // Hash non-primitive keys
   }
 
-  set(key: KeyType, value: T): void {
-    const hashedKey = DapperMapper.getHashedKey(key);
-    this.map.set(hashedKey, { key, value });
+  private getHashedKey(key: any): string {
+    return `dope:${this.hashFunction(key)}`;
   }
 
-  get(key: KeyType): T | undefined {
-    const hashedKey = DapperMapper.getHashedKey(key);
-    const entry = this.map.get(hashedKey);
-    return entry ? entry.value : undefined;
+  set(key: DopeKey, value: V): void {
+    const hashedKey = this.getHashedKey(key);
+    this.dopeMap.set(hashedKey, value);
   }
 
-  has(key: KeyType): boolean {
-    const hashedKey = DapperMapper.getHashedKey(key);
-    return this.map.has(hashedKey);
+  get(key: DopeKey) {
+    const hashedKey = this.getHashedKey(key);
+    const entry = this.dopeMap.get(hashedKey);
+    return entry;
   }
 
-  delete(key: KeyType): boolean {
-    const hashedKey = DapperMapper.getHashedKey(key);
-    return this.map.delete(hashedKey);
+  has(key: DopeKey) {
+    const hashedKey = this.getHashedKey(key);
+    return this.dopeMap.has(hashedKey);
   }
 
-  clear(): void {
-    this.map.clear();
+  delete(key: DopeKey) {
+    const hashedKey = this.getHashedKey(key);
+    return this.dopeMap.delete(hashedKey);
   }
 
-  get size(): number {
-    return this.map.size;
+  /**
+   * Returns Dope Map's current size
+   */
+  get size() {
+    return this.dopeMap.size;
   }
 
-  export(): Array<{ hash: string; key: KeyType; value: T }> {
-    return Array.from(this.map.entries()).map(([hash, { key, value }]) => ({
-      hash,
-      key,
-      value,
-    }));
+  /**
+   * Returns the full Dope Map
+   */
+  get map() {
+    return Object.fromEntries(this.dopeMap.entries());
+  }
+
+  clear() {
+    return this.dopeMap.clear();
+  }
+
+  entries(asArray: true): [string, V][];
+  entries(asArray?: false): IterableIterator<[string, V]>;
+  entries(asArray?: boolean): [string, V][] | IterableIterator<[string, V]> {
+    if (asArray) {
+      return Array.from(this.dopeMap.entries());
+    }
+    return this.dopeMap.entries();
+  }
+
+  forEach(args: Parameters<Map<string, V>["forEach"]>) {
+    return this.dopeMap.forEach(...args);
+  }
+
+  keys(asArray: boolean = false) {
+    const keys = this.dopeMap.keys();
+    return asArray ? Array.from(keys) : keys;
+  }
+
+  values(asArray: boolean = false) {
+    const values = this.dopeMap.values();
+    return asArray ? Array.from(values) : values;
   }
 }

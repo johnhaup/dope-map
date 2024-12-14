@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import DapperMapper from "../src/index";
+import DopeMap from "../src/index";
 import { nirvanaKey, nirvanaValue } from "../__fixtures__";
 
 type TestValue = {
@@ -10,7 +10,7 @@ type TestValue = {
 
 type ResultsValue = Array<{
   operation: string;
-  dapperDuration: number;
+  dopeDuration: number;
   nativeDuration: number;
   overhead: number;
 }>;
@@ -47,8 +47,8 @@ const updateLogFile = () => {
     .map(([keyType, entries]) =>
       entries
         .map(
-          ({ dapperDuration, nativeDuration, overhead }) =>
-            `key: ${keyType} | dapper: ${dapperDuration}ms | map: ${nativeDuration}ms | overhead: ${overhead}ms`
+          ({ dopeDuration, nativeDuration, overhead }) =>
+            `key: ${keyType} | dope: ${dopeDuration}ms | map: ${nativeDuration}ms | overhead: ${overhead}ms`
         )
         .join("\n")
     )
@@ -67,13 +67,13 @@ const updateLogFile = () => {
 
 const runBenchmark = (iterationCounts: number[]) => {
   const allResults: string[] = iterationCounts.map((iterations) => {
-    const dapperMapper = new DapperMapper<TestValue>();
+    const dopeMap = new DopeMap<TestValue>();
     const nativeMap = new Map<string | object, TestValue>();
 
     const addResult = (
       keyType: string,
       operation: string,
-      dapperDuration: number,
+      dopeDuration: number,
       nativeDuration: number
     ) => {
       const key = genKeyType(keyType, iterations);
@@ -84,9 +84,9 @@ const runBenchmark = (iterationCounts: number[]) => {
 
       results[key].push({
         operation,
-        dapperDuration,
+        dopeDuration,
         nativeDuration,
-        overhead: parseFloat((dapperDuration - nativeDuration).toFixed(2)),
+        overhead: parseFloat((dopeDuration - nativeDuration).toFixed(2)),
       });
     };
 
@@ -97,11 +97,11 @@ const runBenchmark = (iterationCounts: number[]) => {
         addResult(
           "Object",
           operation,
-          runBenchmarkTask(`DapperMapper ${operation}: Object Key`, () => {
+          runBenchmarkTask(`DopeMap ${operation}: Object Key`, () => {
             for (let i = 0; i < iterations; i++) {
               const key = { ...nirvanaKey, index: i };
               const value = { ...nirvanaValue, id: i };
-              dapperMapper[operation](key, value);
+              dopeMap[operation](key, value);
             }
           }).duration,
           runBenchmarkTask(`Native Map ${operation}: Object Key`, () => {
@@ -117,8 +117,8 @@ const runBenchmark = (iterationCounts: number[]) => {
       addResult(
         "Object",
         "Size",
-        runBenchmarkTask("DapperMapper Size: Object Key", () => {
-          dapperMapper.size;
+        runBenchmarkTask("DopeMap Size: Object Key", () => {
+          dopeMap.size;
         }).duration,
         runBenchmarkTask("Native Map Size: Object Key", () => {
           nativeMap.size;
@@ -129,8 +129,8 @@ const runBenchmark = (iterationCounts: number[]) => {
       addResult(
         "Object",
         "Clear",
-        runBenchmarkTask("DapperMapper Clear: Object Key", () => {
-          dapperMapper.clear();
+        runBenchmarkTask("DopeMap Clear: Object Key", () => {
+          dopeMap.clear();
         }).duration,
         runBenchmarkTask("Native Map Clear: Object Key", () => {
           nativeMap.clear();
@@ -143,11 +143,11 @@ const runBenchmark = (iterationCounts: number[]) => {
         addResult(
           "String",
           operation,
-          runBenchmarkTask(`DapperMapper ${operation}: String Key`, () => {
+          runBenchmarkTask(`DopeMap ${operation}: String Key`, () => {
             for (let i = 0; i < iterations; i++) {
               const key = `nirvana${i}`;
               const value = { ...nirvanaValue, id: i };
-              dapperMapper[operation](key, value);
+              dopeMap[operation](key, value);
             }
           }).duration,
           runBenchmarkTask(`Native Map ${operation}: String Key`, () => {
@@ -163,8 +163,8 @@ const runBenchmark = (iterationCounts: number[]) => {
       addResult(
         "String",
         "Size",
-        runBenchmarkTask("DapperMapper Size: String Key", () => {
-          dapperMapper.size;
+        runBenchmarkTask("DopeMap Size: String Key", () => {
+          dopeMap.size;
         }).duration,
         runBenchmarkTask("Native Map Size: String Key", () => {
           nativeMap.size;
@@ -174,8 +174,8 @@ const runBenchmark = (iterationCounts: number[]) => {
       addResult(
         "String",
         "Clear",
-        runBenchmarkTask("DapperMapper Clear: String Key", () => {
-          dapperMapper.clear();
+        runBenchmarkTask("DopeMap Clear: String Key", () => {
+          dopeMap.clear();
         }).duration,
         runBenchmarkTask("Native Map Clear: String Key", () => {
           nativeMap.clear();
@@ -194,7 +194,7 @@ const runBenchmark = (iterationCounts: number[]) => {
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DopeMap (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -202,12 +202,12 @@ const runBenchmark = (iterationCounts: number[]) => {
       <tbody>
         ${results[genKeyType("Object", iterations)]
           .map(
-            ({ operation, dapperDuration, nativeDuration, overhead }, index) =>
+            ({ operation, dopeDuration, nativeDuration, overhead }, index) =>
               `<tr style="background-color: ${
                 index % 2 === 0 ? "#f2f2f2" : "white"
               }">
                 <td style="border: 1px solid #ddd; padding: 8px;">${operation}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${dapperDuration}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${dopeDuration}</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">${nativeDuration}</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">${overhead}</td>
               </tr>`
@@ -222,7 +222,7 @@ const runBenchmark = (iterationCounts: number[]) => {
       <thead>
         <tr>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DapperMapper (ms)</th>
+          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">DopeMap (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
         </tr>
@@ -230,12 +230,12 @@ const runBenchmark = (iterationCounts: number[]) => {
       <tbody>
         ${results[genKeyType("String", iterations)]
           .map(
-            ({ operation, dapperDuration, nativeDuration, overhead }, index) =>
+            ({ operation, dopeDuration, nativeDuration, overhead }, index) =>
               `<tr style="background-color: ${
                 index % 2 === 0 ? "#f2f2f2" : "white"
               }">
                 <td style="border: 1px solid #ddd; padding: 8px;">${operation}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${dapperDuration}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${dopeDuration}</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">${nativeDuration}</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">${overhead}</td>
               </tr>`

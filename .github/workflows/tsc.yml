@@ -1,0 +1,19 @@
+name: TypeScript Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  setup:
+    uses: ./.github/workflows/setup.yml
+
+  tsc:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: TypeScript Check
+        run: npx tsc --noEmit

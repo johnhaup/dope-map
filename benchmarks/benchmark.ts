@@ -118,10 +118,10 @@ const runBenchmark = (iterationCounts: number[]) => {
         "Object",
         "Size",
         runBenchmarkTask("DopeMap Size: Object Key", () => {
-          dopeMap.size;
+          return dopeMap.size;
         }).duration,
         runBenchmarkTask("Native Map Size: Object Key", () => {
-          nativeMap.size;
+          return nativeMap.size;
         }).duration
       );
 
@@ -164,10 +164,10 @@ const runBenchmark = (iterationCounts: number[]) => {
         "String",
         "Size",
         runBenchmarkTask("DopeMap Size: String Key", () => {
-          dopeMap.size;
+          return dopeMap.size;
         }).duration,
         runBenchmarkTask("Native Map Size: String Key", () => {
-          nativeMap.size;
+          return nativeMap.size;
         }).duration
       );
 

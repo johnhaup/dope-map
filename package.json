@@ -16,7 +16,7 @@
     "benchmark": "ts-node benchmarks/benchmark.ts",
     "build": "rollup -c",
     "test": "jest",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,3 @@
-import hash from "hash-it";
 import DopeMap from "../src/index";
 import {
   nirvanaKey,

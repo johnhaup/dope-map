@@ -1,24 +1,25 @@
 import hashIt from "hash-it";
 
-type DopeKey = any;
+type DopeKey = unknown;
+type HashFunction = (args: unknown) => unknown;
 
 interface DopeMapConfig {
   /**
    *  Optional custom hash function
    */
-  hashFunction?: Function;
+  hashFunction?: HashFunction;
 }
 
 export default class DopeMap<V> {
   private dopeMap: Map<string, V>;
-  private hashFunction: Function = hashIt;
+  private hashFunction: HashFunction = hashIt;
 
   constructor(config: DopeMapConfig = {}) {
     this.validateHashFunction(config.hashFunction);
     this.dopeMap = new Map();
   }
 
-  private validateHashFunction(fn?: Function) {
+  private validateHashFunction(fn?: HashFunction) {
     if (fn) {
       if (typeof fn !== "function") {
         throw new Error(
@@ -30,7 +31,7 @@ export default class DopeMap<V> {
     }
   }
 
-  private getHashedKey(key: any): string {
+  private getHashedKey(key: DopeKey): string {
     return `dope:${this.hashFunction(key)}`;
   }
 

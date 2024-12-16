@@ -2,10 +2,12 @@
 
 A wrapper around Map for hashing complex object keys by value. This allows you to reference the same Map value using objects that are deep equal but not referentially equal.
 
+Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function.  You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
+
 ## Installation
 
 ```bash
-yarn add dope-map
+yarn add dope-map hash-it
 ```
 
 ## Usage
@@ -18,12 +20,19 @@ const dopeMap = new DopeMap();
 dopeMap.set({ foo: "bar", to: "fu" }, [1, 2, 3, 4, 5]);
 
 dopeMap.get({ foo: "bar", to: "fu" }); // [1, 2, 3, 4, 5]
-dopeMap.get({ to: "fu", foo: "bar" }); // [1, 2, 3, 4, 5]
+dopeMap.get({ to: "fu", foo: "bar" }); // [1, 2, 3, 4, 5], same reference
+```
+
+```javascript
+import DopeMap from "dope-map";
+import blazeHasher from "blazing-fast-hash-package";
+
+const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 ```
 
 ## Benchmark Results
 
-This library comes with performance tradeoffs, so if your main goal is performance over efficiency, this likely isn't the right approach, especially when you are processing a large amount of data.
+This library comes with performance tradeoffs that grow as the Map does.
 
 #### 1,000 Iterations
 

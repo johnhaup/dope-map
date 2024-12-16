@@ -88,7 +88,7 @@ export default class DopeMap<V> {
     return this.dopeMap.entries();
   }
 
-  forEach(args: Parameters<Map<string, V>["forEach"]>) {
+  forEach(...args: Parameters<Map<string, V>["forEach"]>) {
     return this.dopeMap.forEach(...args);
   }
 

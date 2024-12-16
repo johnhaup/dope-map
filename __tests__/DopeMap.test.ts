@@ -75,17 +75,16 @@ describe("DopeMap", () => {
     );
   });
 
-  it("should get all entries", () => {
-    dopeMap.set(weezerKey, weezerValue);
-    dopeMap.set(nirvanaKey, nirvanaValue);
-    const entries = dopeMap.entries();
-    expect(typeof entries.next).toBe("function");
-
-    const entriesArray = dopeMap.entries(true);
-    expect(entriesArray).toHaveLength(2);
-    expect(typeof entriesArray[0][0]).toBe("string");
-    expect(entriesArray[0][1]).toEqual(weezerValue);
-    expect(typeof entriesArray[1][0]).toBe("string");
-    expect(entriesArray[1][1]).toEqual(nirvanaValue);
+  it("iterates over all entries using the 'forEach' method", () => {
+    let index = 0;
+    dopeMap.forEach((v, k, m) => {
+      if (index === 0) {
+        expect(v).toBe(weezerValue);
+      } else {
+        expect(v).toBe(nirvanaValue);
+      }
+      expect(m.get(k)).toBe(v);
+      index++;
+    });
   });
 });

@@ -12,20 +12,33 @@ describe("DopeMap", () => {
 
   beforeEach(() => {
     dopeMap = new DopeMap<TestValue>();
+    dopeMap.set(weezerKey, weezerValue);
+    dopeMap.set(nirvanaKey, nirvanaValue);
   });
 
   it("sets and retrieves a value by key", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
     expect(dopeMap.get(nirvanaKey)).toEqual(nirvanaValue);
   });
 
   it("allows for object keys to be equal but different references", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
     expect(dopeMap.get({ ...nirvanaKey })).toEqual(nirvanaValue);
   });
 
+  it("uses custom hash function", () => {
+    const customHashMap = new DopeMap({ hashFunction: () => "123" });
+    customHashMap.set({ blarf: true }, "hey there");
+    expect(customHashMap.has("123")).toBe(true);
+    expect(customHashMap.get("123")).toBe("hey there");
+  });
+
+  it("throws error when custom hash function is not a function", () => {
+    expect(() => {
+      // @ts-expect-error hashFunction is wrong type
+      new DopeMap({ hashFunction: "123" });
+    }).toThrow("[DOPE] Provided hashFunction must be a function.  Not dope!");
+  });
+
   it("returns undefined for a non-existing key", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
     expect(dopeMap.get(nirvanaKey)).toEqual(nirvanaValue);
 
     const partialNirvanaKey = {
@@ -36,27 +49,30 @@ describe("DopeMap", () => {
   });
 
   it("confirms the presence of a key", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
     expect(dopeMap.get(nirvanaKey)).toEqual(nirvanaValue);
     expect(dopeMap.has(nirvanaKey)).toBe(true);
   });
 
   it("deletes a key", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
     expect(dopeMap.get(nirvanaKey)).toEqual(nirvanaValue);
-
     expect(dopeMap.delete(nirvanaKey)).toBe(true);
     expect(dopeMap.has(nirvanaKey)).toBe(false);
   });
 
   it("clears all keys", () => {
-    dopeMap.set(nirvanaKey, nirvanaValue);
-    dopeMap.set(weezerKey, weezerValue);
-
     dopeMap.clear();
     expect(dopeMap.size).toBe(0);
     expect(dopeMap.has(nirvanaKey)).toBe(false);
     expect(dopeMap.has(weezerKey)).toBe(false);
+  });
+
+  it("returns object of map", () => {
+    const map = dopeMap.getMap();
+    expect(typeof map).toBe("object");
+    expect(Object.keys(map).every((k) => typeof k === "string")).toBe(true);
+    expect(
+      Object.values(map).every((v) => v === nirvanaValue || v === weezerValue)
+    );
   });
 
   it("should get all entries", () => {

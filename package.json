@@ -16,6 +16,7 @@
     "benchmark": "ts-node benchmarks/benchmark.ts",
     "build": "rollup -c",
     "test": "jest",
+    "test:coverage": "jest --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
     "lint": "eslint ."
   },
   "keywords": [],

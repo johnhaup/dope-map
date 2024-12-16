@@ -1,16 +1,17 @@
 import hashIt from "hash-it";
 
 type DopeKey = unknown;
-type HashFunction = (args: unknown) => unknown;
+type HashFunction = (args: unknown) => string | number;
 
 interface DopeMapConfig {
   /**
-   *  Optional custom hash function
+   *  Optional custom hash function.  Must return string or number.
    */
   hashFunction?: HashFunction;
 }
 
 export default class DopeMap<V> {
+  private hashPrefix = "_dope:";
   private dopeMap: Map<string, V>;
   private hashFunction: HashFunction = hashIt;
 
@@ -32,7 +33,11 @@ export default class DopeMap<V> {
   }
 
   private getHashedKey(key: DopeKey): string {
-    return `dope:${this.hashFunction(key)}`;
+    if (typeof key === "string" && key.startsWith(this.hashPrefix)) {
+      return key;
+    }
+
+    return `${this.hashPrefix}${this.hashFunction(key)}`;
   }
 
   set(key: DopeKey, value: V): void {
@@ -64,9 +69,9 @@ export default class DopeMap<V> {
   }
 
   /**
-   * Returns the full Dope Map
+   * Returns the full Dope Map as an object.  Keys will be hashed keys.
    */
-  get map() {
+  getMap() {
     return Object.fromEntries(this.dopeMap.entries());
   }
 
@@ -87,13 +92,21 @@ export default class DopeMap<V> {
     return this.dopeMap.forEach(...args);
   }
 
-  keys(asArray: boolean = false) {
-    const keys = this.dopeMap.keys();
-    return asArray ? Array.from(keys) : keys;
+  keys(asArray: true): string[];
+  keys(asArray?: false): IterableIterator<string>;
+  keys(asArray?: boolean): string[] | IterableIterator<string> {
+    if (asArray) {
+      return Array.from(this.dopeMap.keys());
+    }
+    return this.dopeMap.keys();
   }
 
-  values(asArray: boolean = false) {
-    const values = this.dopeMap.values();
-    return asArray ? Array.from(values) : values;
+  values(asArray: true): V[];
+  values(asArray?: false): IterableIterator<V>;
+  values(asArray?: boolean): V[] | IterableIterator<V> {
+    if (asArray) {
+      return Array.from(this.dopeMap.values());
+    }
+    return this.dopeMap.values();
   }
 }

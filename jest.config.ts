@@ -4,4 +4,5 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": ["ts-jest", { useESM: true }],
   },
+  coveragePathIgnorePatterns: ["/node_modules/", "/__fixtures__/"],
 };

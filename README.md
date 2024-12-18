@@ -1,8 +1,14 @@
-# Dope Map
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=3jqTqrGtGjg">
+    <img alt="dope" width=300 src="dope.jpg">
+  </a>
+</div>
 
-A wrapper around Map for hashing complex object keys by value. This allows you to reference the same Map value using objects that are deep equal but not referentially equal.
+# dope-map
 
-Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function.  You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
+A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that adds the ability to uses keys of equal but not referential value.
+
+Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
 ## Installation
 

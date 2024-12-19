@@ -30,12 +30,8 @@ function generateMixedKeys(size: number): object[] {
   return keys;
 }
 
-const final = {};
-
 SIZES.forEach((size) => {
-  console.log(
-    `\nRunning benchmarks for size: ${size} entries with mixed keys\n`
-  );
+  console.log(`Running benchmarks for size: ${size} entries with mixed keys`);
   const suite = new Benchmark.Suite();
 
   const nativeMap = new Map<object, string>();
@@ -49,9 +45,6 @@ SIZES.forEach((size) => {
       name: `Map - Set (${size} entries)`,
       fn: function () {
         objectKeys.forEach((key) => nativeMap.set(key, testValue));
-      },
-      onComplete: (args) => {
-        console.log("onComplete", args);
       },
     })
     .add(`Map - Set (${size} entries)`, function () {

@@ -1,7 +1,10 @@
 import Benchmark, { Target } from "benchmark";
 import DopeMap from "../src";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const SIZES = [100, 1_000, 10_000];
+const SIZES = [100, 1_000, 10_000, 100_000];
 
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
@@ -30,6 +33,8 @@ function generateMixedKeys(size: number): object[] {
   return keys;
 }
 
+const resultsTable: string[] = [];
+
 SIZES.forEach((size) => {
   console.log(`Running benchmarks for size: ${size} entries with mixed keys`);
   const suite = new Benchmark.Suite();
@@ -41,12 +46,6 @@ SIZES.forEach((size) => {
   const testValue = "testValue";
 
   suite
-    .add({
-      name: `Map - Set (${size} entries)`,
-      fn: function () {
-        objectKeys.forEach((key) => nativeMap.set(key, testValue));
-      },
-    })
     .add(`Map - Set (${size} entries)`, function () {
       objectKeys.forEach((key) => nativeMap.set(key, testValue));
     })
@@ -91,11 +90,39 @@ SIZES.forEach((size) => {
       const nativeDelete = results[`Map - Delete (${size} entries)`];
       const dopeDelete = results[`DopeMap - Delete (${size} entries)`];
 
-      console.log("\nTime Differences (DopeMap vs Map):\n");
-
-      console.log(`Set: ${(dopeSet - nativeSet).toFixed(4)} ms`);
-      console.log(`Get: ${(dopeGet - nativeGet).toFixed(4)} ms`);
-      console.log(`Delete: ${(dopeDelete - nativeDelete).toFixed(4)} ms`);
+      resultsTable.push(
+        `#### Results for ${size.toLocaleString()} entries`,
+        `| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |`,
+        `|-----------|-----------------|--------------|-----------------|`,
+        `| Set       | ${nativeSet.toFixed(3)}      | ${dopeSet.toFixed(
+          3
+        )}     | ${(dopeSet - nativeSet).toFixed(3)}          |`,
+        `| Get       | ${nativeGet.toFixed(3)}      | ${dopeGet.toFixed(
+          3
+        )}     | ${(dopeGet - nativeGet).toFixed(3)}          |`,
+        `| Delete    | ${nativeDelete.toFixed(3)}      | ${dopeDelete.toFixed(
+          3
+        )}     | ${(dopeDelete - nativeDelete).toFixed(3)}          |`,
+        ``
+      );
     })
-    .run({ async: true });
+    .run({ async: false }); // Ensure benchmarks run sequentially
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const readmePath = path.resolve(__dirname, "../README.md");
+const readmeContent = fs.readFileSync(readmePath, "utf-8");
+
+// Replace the benchmark section
+const updatedReadme = readmeContent.replace(
+  /<!-- BENCHMARK RESULTS START -->([\s\S]*?)<!-- BENCHMARK RESULTS END -->/,
+  `<!-- BENCHMARK RESULTS START -->\n${resultsTable.join(
+    "\n"
+  )}\n<!-- BENCHMARK RESULTS END -->`
+);
+
+fs.writeFileSync(readmePath, updatedReadme, "utf-8");
+
+console.log("Benchmark results updated in README.md");

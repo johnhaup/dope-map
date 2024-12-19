@@ -6,7 +6,7 @@
 
 # dope-map
 
-A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that adds the ability to uses keys of equal but not referential value.
+A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that adds the ability to uses keys of equal but not referential value. This comes with a performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is large take that into consideration.
 
 Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
@@ -36,329 +36,35 @@ import blazeHasher from "blazing-fast-hash-package";
 const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 ```
 
-## Benchmark Results
+## Benchmarks
 
-This library comes with performance tradeoffs that grow as the Map does.
+<!-- BENCHMARK RESULTS START -->
+#### Results for 100 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.001      | 0.083     | 0.083          |
+| Get       | 0.000      | 0.070     | 0.070          |
+| Delete    | 0.000      | 0.076     | 0.076          |
 
-#### 1,000 Iterations
+#### Results for 1,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.009      | 0.862     | 0.853          |
+| Get       | 0.000      | 0.737     | 0.736          |
+| Delete    | 0.005      | 0.784     | 0.779          |
 
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: Object</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">2.32</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.31</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">2.01</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">3.49</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.2</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">3.29</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.46</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.15</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.31</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.42</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.12</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.3</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: String (1,000 iterations)</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.28</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.24</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.04</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.17</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.15</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.02</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.13</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.12</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.12</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.12</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+#### Results for 10,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.163      | 9.754     | 9.591          |
+| Get       | 0.007      | 9.503     | 9.495          |
+| Delete    | 0.052      | 8.681     | 8.629          |
 
-#### 10,000 Iterations
+#### Results for 100,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 1.728      | 112.848     | 111.120          |
+| Get       | 0.361      | 112.191     | 111.830          |
+| Delete    | 0.602      | 95.297     | 94.695          |
 
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: Object</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">15.11</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.47</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">13.64</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">14.06</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.22</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">12.84</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">14.4</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.17</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">13.23</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">13.52</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.17</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">12.35</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: String (10,000 iterations)</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.9</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.65</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.25</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.25</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.16</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.09</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.14</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.15</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">-0.01</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.43</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">1.35</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.08</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-#### 100,000 Iterations
-
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: Object</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">146.31</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">23.5</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">122.81</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">150.37</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">12.69</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">137.68</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">142.09</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">12.65</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">129.44</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">145.3</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">12.53</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">132.77</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.01</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="flex: 1; min-width: 400px; max-width: 600px;">
-    <h5>Key Type: String (100,000 iterations)</h5>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Operation</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">dopeMapper (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Map (ms)</th>
-          <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f4f4f4;">Overhead (ms)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">set</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">20.33</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">21.6</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">-1.27</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">get</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">27.48</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">16.97</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">10.51</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">has</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">16.74</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">16.55</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0.19</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">delete</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">18.3</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">19</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">-0.7</td>
-              </tr>
-<tr style="background-color: #f2f2f2">
-                <td style="border: 1px solid #ddd; padding: 8px;">Size</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-<tr style="background-color: white">
-                <td style="border: 1px solid #ddd; padding: 8px;">Clear</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">0</td>
-              </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
----
+<!-- BENCHMARK RESULTS END -->

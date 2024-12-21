@@ -14,7 +14,7 @@ interface DopeMapConfig {
 export default class DopeMap<V> {
   private dopeMap: Map<HashedKey, V>;
   private hashFunction: HashFunction = hashIt;
-  private primitiveKeys = new Set(["string", "number"]);
+  private primitiveKeys = new Set<HashedKey>(["string", "number"]);
 
   constructor(config: DopeMapConfig = {}) {
     this.validateHashFunction(config.hashFunction);
@@ -33,9 +33,13 @@ export default class DopeMap<V> {
     }
   }
 
+  private isHashedKey(key: DopeKey): key is HashedKey {
+    return this.primitiveKeys.has(typeof key);
+  }
+
   private getHashedKey(key: DopeKey) {
-    if (this.primitiveKeys.has(typeof key)) {
-      return key as HashedKey;
+    if (this.isHashedKey(key)) {
+      return key;
     }
 
     return this.hashFunction(key);

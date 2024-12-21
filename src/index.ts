@@ -1,7 +1,8 @@
 import hashIt from "hash-it";
 
 type DopeKey = unknown;
-type HashFunction = (args: unknown) => string | number;
+type HashedKey = string | number;
+type HashFunction = (args: unknown) => HashedKey;
 
 interface DopeMapConfig {
   /**
@@ -11,8 +12,7 @@ interface DopeMapConfig {
 }
 
 export default class DopeMap<V> {
-  private hashPrefix = "_dope:";
-  private dopeMap: Map<string, V>;
+  private dopeMap: Map<HashedKey, V>;
   private hashFunction: HashFunction = hashIt;
 
   constructor(config: DopeMapConfig = {}) {
@@ -32,12 +32,8 @@ export default class DopeMap<V> {
     }
   }
 
-  private getHashedKey(key: DopeKey): string {
-    if (typeof key === "string" && key.startsWith(this.hashPrefix)) {
-      return key;
-    }
-
-    return `${this.hashPrefix}${this.hashFunction(key)}`;
+  private getHashedKey(key: DopeKey) {
+    return this.hashFunction(key);
   }
 
   set(key: DopeKey, value: V): void {
@@ -79,22 +75,24 @@ export default class DopeMap<V> {
     return this.dopeMap.clear();
   }
 
-  entries(asArray: true): [string, V][];
-  entries(asArray?: false): IterableIterator<[string, V]>;
-  entries(asArray?: boolean): [string, V][] | IterableIterator<[string, V]> {
+  entries(asArray: true): [HashedKey, V][];
+  entries(asArray?: false): IterableIterator<[HashedKey, V]>;
+  entries(
+    asArray?: boolean
+  ): [HashedKey, V][] | IterableIterator<[HashedKey, V]> {
     if (asArray) {
       return Array.from(this.dopeMap.entries());
     }
     return this.dopeMap.entries();
   }
 
-  forEach(...args: Parameters<Map<string, V>["forEach"]>) {
+  forEach(...args: Parameters<Map<string | number, V>["forEach"]>) {
     return this.dopeMap.forEach(...args);
   }
 
-  keys(asArray: true): string[];
-  keys(asArray?: false): IterableIterator<string>;
-  keys(asArray?: boolean): string[] | IterableIterator<string> {
+  keys(asArray: true): HashedKey[];
+  keys(asArray?: false): IterableIterator<HashedKey>;
+  keys(asArray?: boolean): HashedKey[] | IterableIterator<HashedKey> {
     if (asArray) {
       return Array.from(this.dopeMap.keys());
     }

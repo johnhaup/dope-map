@@ -39,37 +39,32 @@ const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 ## Benchmarks
 
 <!-- BENCHMARK RESULTS START -->
-
 #### Results for 100 entries
-
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.001    | 0.083        | 0.083           |
-| Get       | 0.000    | 0.070        | 0.070           |
-| Delete    | 0.000    | 0.076        | 0.076           |
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.001      | 0.071     | 0.070          |
+| Get       | 0.000      | 0.069     | 0.069          |
+| Delete    | 0.000      | 0.070     | 0.069          |
 
 #### Results for 1,000 entries
-
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.009    | 0.862        | 0.853           |
-| Get       | 0.000    | 0.737        | 0.736           |
-| Delete    | 0.005    | 0.784        | 0.779           |
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.009      | 0.729     | 0.720          |
+| Get       | 0.000      | 0.699     | 0.699          |
+| Delete    | 0.005      | 0.704     | 0.699          |
 
 #### Results for 10,000 entries
-
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.163    | 9.754        | 9.591           |
-| Get       | 0.007    | 9.503        | 9.495           |
-| Delete    | 0.052    | 8.681        | 8.629           |
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.164      | 7.514     | 7.350          |
+| Get       | 0.007      | 7.218     | 7.210          |
+| Delete    | 0.053      | 7.314     | 7.261          |
 
 #### Results for 100,000 entries
-
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 1.728    | 112.848      | 111.120         |
-| Get       | 0.361    | 112.191      | 111.830         |
-| Delete    | 0.602    | 95.297       | 94.695          |
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 1.762      | 94.037     | 92.274          |
+| Get       | 0.369      | 88.134     | 87.765          |
+| Delete    | 0.656      | 80.199     | 79.543          |
 
 <!-- BENCHMARK RESULTS END -->

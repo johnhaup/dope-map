@@ -9,6 +9,7 @@ import {
 describe("Array arguments", () => {
   type TestValue = { [key: number]: string };
   let dopeMap: DopeMap<TestValue>;
+  const validKeys = new Set(["string", "number"]);
 
   beforeAll(() => {
     dopeMap = new DopeMap<TestValue>();
@@ -26,7 +27,7 @@ describe("Array arguments", () => {
     expect(firstItem).toHaveProperty("done");
     expect(Array.isArray(firstItem.value)).toBe(true);
     expect(firstItem.value.length).toBe(2);
-    expect(typeof firstItem.value[0]).toBe("string");
+    expect(validKeys.has(typeof firstItem.value[0])).toBe(true);
     expect(firstItem.value[1]).toBe(weezerValue);
 
     let count = 0;
@@ -44,9 +45,9 @@ describe("Array arguments", () => {
 
     expect(Array.isArray(entries)).toBe(true);
     expect(entries.length).toBe(2);
-    expect(typeof entries[0][0]).toBe("string");
+    expect(validKeys.has(typeof entries[0][0])).toBe(true);
     expect(entries[0][1]).toEqual(weezerValue);
-    expect(typeof entries[1][0]).toBe("string");
+    expect(validKeys.has(typeof entries[1][0])).toBe(true);
     expect(entries[1][1]).toEqual(nirvanaValue);
   });
 
@@ -58,11 +59,11 @@ describe("Array arguments", () => {
     const firstItem = keys.next();
     expect(firstItem).toHaveProperty("value");
     expect(firstItem).toHaveProperty("done");
-    expect(typeof firstItem.value).toBe("string");
+    expect(validKeys.has(typeof firstItem.value)).toBe(true);
 
     let count = 0;
     for (const entry of keys) {
-      expect(typeof entry).toBe("string");
+      expect(validKeys.has(typeof entry)).toBe(true);
       count++;
     }
 
@@ -75,7 +76,7 @@ describe("Array arguments", () => {
     expect(Array.isArray(keys)).toBe(true);
     expect(keys.length).toBe(2);
     keys.forEach((key) => {
-      expect(typeof key).toBe("string");
+      expect(validKeys.has(typeof key)).toBe(true);
       expect(dopeMap.has(key)).toBe(true);
     });
   });

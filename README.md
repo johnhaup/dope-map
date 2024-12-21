@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://www.youtube.com/watch?v=3jqTqrGtGjg">
+  <a href="https://youtu.be/lgErexMUTC0?si=e5aRXD95TYwhgihG">
     <img alt="dope" width=300 src="dope-badges.png">
   </a>
 </div>

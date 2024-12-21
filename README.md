@@ -1,21 +1,7 @@
-<div style="display: flex; justify-content: center; width: 100%;">
-  <div style="position: relative; display: inline-block;">
-    <img alt="dope" width="300px" src="dope.jpg" style="display: block; border-radius: 24px" />
-    <div style="position: absolute; top: 100px; left: 30px; right: 0px; display: flex; flex-direction: column; ">
-      <a href="https://github.com/johnhaup/dope-map/actions/workflows/tsc.yml">
-        <img src="https://github.com/johnhaup/dope-map/actions/workflows/tsc.yml/badge.svg"
-             alt="TypeScript Check" />
-      </a>
-      <a href="https://github.com/johnhaup/dope-map/actions/workflows/lint.yml">
-        <img src="https://github.com/johnhaup/dope-map/actions/workflows/lint.yml/badge.svg"
-             alt="Lint" />
-      </a>
-      <a href="https://github.com/johnhaup/dope-map/actions/workflows/test.yml">
-        <img src="https://github.com/johnhaup/dope-map/actions/workflows/test.yml/badge.svg"
-             alt="Test" />
-      </a>
-    </div>
-  </div>
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=3jqTqrGtGjg">
+    <img alt="dope" width=300 src="dope-badges.png">
+  </a>
 </div>
 
 # dope-map

@@ -1,7 +1,21 @@
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=3jqTqrGtGjg">
-    <img alt="dope" width=300 src="dope.jpg">
-  </a>
+<div style="display: flex; justify-content: center; width: 100%;">
+  <div style="position: relative; display: inline-block;">
+    <img alt="dope" width="300px" src="dope.jpg" style="display: block; border-radius: 24px" />
+    <div style="position: absolute; top: 100px; left: 30px; right: 0px; display: flex; flex-direction: column; ">
+      <a href="https://github.com/johnhaup/dope-map/actions/workflows/tsc.yml">
+        <img src="https://github.com/johnhaup/dope-map/actions/workflows/tsc.yml/badge.svg"
+             alt="TypeScript Check" />
+      </a>
+      <a href="https://github.com/johnhaup/dope-map/actions/workflows/lint.yml">
+        <img src="https://github.com/johnhaup/dope-map/actions/workflows/lint.yml/badge.svg"
+             alt="Lint" />
+      </a>
+      <a href="https://github.com/johnhaup/dope-map/actions/workflows/test.yml">
+        <img src="https://github.com/johnhaup/dope-map/actions/workflows/test.yml/badge.svg"
+             alt="Test" />
+      </a>
+    </div>
+  </div>
 </div>
 
 # dope-map
@@ -39,32 +53,37 @@ const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 ## Benchmarks
 
 <!-- BENCHMARK RESULTS START -->
+
 #### Results for 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.001      | 0.083     | 0.083          |
-| Get       | 0.000      | 0.070     | 0.070          |
-| Delete    | 0.000      | 0.076     | 0.076          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.001    | 0.083        | 0.083           |
+| Get       | 0.000    | 0.070        | 0.070           |
+| Delete    | 0.000    | 0.076        | 0.076           |
 
 #### Results for 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.009      | 0.862     | 0.853          |
-| Get       | 0.000      | 0.737     | 0.736          |
-| Delete    | 0.005      | 0.784     | 0.779          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.009    | 0.862        | 0.853           |
+| Get       | 0.000    | 0.737        | 0.736           |
+| Delete    | 0.005    | 0.784        | 0.779           |
 
 #### Results for 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.163      | 9.754     | 9.591          |
-| Get       | 0.007      | 9.503     | 9.495          |
-| Delete    | 0.052      | 8.681     | 8.629          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.163    | 9.754        | 9.591           |
+| Get       | 0.007    | 9.503        | 9.495           |
+| Delete    | 0.052    | 8.681        | 8.629           |
 
 #### Results for 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 1.728      | 112.848     | 111.120          |
-| Get       | 0.361      | 112.191     | 111.830          |
-| Delete    | 0.602      | 95.297     | 94.695          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 1.728    | 112.848      | 111.120         |
+| Get       | 0.361    | 112.191      | 111.830         |
+| Delete    | 0.602    | 95.297       | 94.695          |
 
 <!-- BENCHMARK RESULTS END -->

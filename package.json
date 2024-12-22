@@ -5,13 +5,16 @@
     "url": "https://github.com/johnhaup/dope-map.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "version": "1.0.4",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/types/index.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "benchmark": "tsx benchmarks/benchmark.ts",
     "build": "rollup -c",

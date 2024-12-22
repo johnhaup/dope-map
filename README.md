@@ -13,7 +13,7 @@ Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key
 ## Installation
 
 ```bash
-yarn add dope-map hash-it
+yarn add @johnhaup/dope-map hash-it
 ```
 
 ## Usage

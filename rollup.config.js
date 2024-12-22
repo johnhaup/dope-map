@@ -18,4 +18,5 @@ export default {
       emitDeclarationOnly: true,
     }),
   ],
+  external: ["hash-it"],
 };

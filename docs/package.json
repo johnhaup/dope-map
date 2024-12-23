@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://johnhaup.github.io/dope-map",
   "dependencies": {
-    "@johnhaup/dope-map": "^1.0.5",
+    "@johnhaup/dope-map": "^1.0.6",
     "ace-builds": "^1.37.1",
     "cra-template-typescript": "1.2.0",
     "hash-it": "^6.0.0",
@@ -12,7 +12,8 @@
     "react": "^18.0.0",
     "react-ace": "^13.0.0",
     "react-dom": "^18.0.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.1.13"
   },
   "scripts": {
     "start": "react-scripts start",

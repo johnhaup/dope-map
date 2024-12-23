@@ -1,15 +1,30 @@
 import "./App.css";
 import KeyValueForm from "./components/KeyValueForm";
 import MapVisualizer from "./components/MapVisualizer";
+import styled from "styled-components";
+
+const AppWrapper = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0px 24px 16px 24px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+`;
+
+const Dope = styled.img`
+  border-radius: 24px;
+`;
 
 function App() {
   return (
-    <div style={{ padding: "0px 24px 16px 24px", textAlign: "center" }}>
-      <h1>DopeMap vs JavaScript Map</h1>
-      <img src={require("./dope.jpg")} style={{ borderRadius: "24px" }} />
+    <AppWrapper>
+      <h1>Map vs DopeMap</h1>
+      <h5>WIP 🚧</h5>
+      <Dope src={require("./dope.jpg")} />
       <KeyValueForm />
       <MapVisualizer />
-    </div>
+    </AppWrapper>
   );
 }
 

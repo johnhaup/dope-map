@@ -1,23 +1,52 @@
-import { useCallback, useState } from "react";
-import AceEditor from "react-ace";
-
-import "ace-builds/src-noconflict/ext-language_tools";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-monokai";
 import { useSetAtom } from "jotai";
+import { useCallback, useState } from "react";
+import styled from "styled-components";
 import {
   handleMapDeleteAtom,
   handleMapGetAtom,
   handleMapSetAtom,
-} from "../atoms/state";
+} from "../atoms/setters";
 
-const labelStyle = {
-  fontSize: "16px",
-  fontWeight: "600",
-  margin: "8px",
-  letterSpacing: "0.5px",
-};
+import { parseInput } from "../utils";
+import { EditorInput } from "./EditorInput";
 
+const FormContainer = styled.div`
+  text-align: center;
+`;
+
+const Title = styled.h2`
+  margin-bottom: 20px;
+`;
+
+const EditorContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0px;
+    margin-bottom: 20px;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  margin-top: 20px;
+`;
+
+const Button = styled.button`
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
 function KeyValueForm() {
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
@@ -25,90 +54,31 @@ function KeyValueForm() {
   const getKeyValue = useSetAtom(handleMapGetAtom);
   const deleteKeyValue = useSetAtom(handleMapDeleteAtom);
 
-  const parseInput = useCallback((key) => {
-    try {
-      return eval(`(${key})`);
-    } catch (e) {
-      console.warn("Invalid key format, treating as string:", key);
-      return key;
-    }
-  }, []);
-
   const onSetPress = useCallback(() => {
     setKeyValue({ key: parseInput(key), value: parseInput(value) });
-  }, [key, value, parseInput]);
+  }, [key, value, setKeyValue]);
 
   const onGetPress = useCallback(() => {
-    const parsedKey = parseInput(key);
-    getKeyValue(parsedKey);
-  }, [key, parseInput]);
+    getKeyValue(parseInput(key));
+  }, [key, getKeyValue]);
 
   const onDeletePress = useCallback(() => {
-    const parsedKey = parseInput(key);
-    deleteKeyValue(parsedKey);
-  }, [key, parseInput]);
+    deleteKeyValue(parseInput(key));
+  }, [key, deleteKeyValue]);
 
   return (
-    <div>
-      <h2>Key-Value Input</h2>
-      <div style={{ display: "flex", flexDirection: "row", gap: "24px" }}>
-        <div style={{ flex: 1 }}>
-          <label style={labelStyle}>Key:</label>
-          <AceEditor
-            mode="javascript"
-            theme="monokai"
-            name="keyEditor"
-            value={key}
-            onChange={setKey}
-            fontSize={14}
-            width="100%"
-            height="200px"
-            showPrintMargin={false}
-            showGutter={true}
-            highlightActiveLine={true}
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: false,
-              enableSnippets: false,
-              showLineNumbers: true,
-              tabSize: 2,
-              useWorker: false,
-            }}
-            style={{ borderRadius: "8px" }}
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label style={labelStyle}>Value:</label>
-          <AceEditor
-            mode="javascript"
-            theme="monokai"
-            name="valueEditor"
-            value={value}
-            onChange={setValue}
-            fontSize={14}
-            width="100%"
-            height="200px"
-            showPrintMargin={false}
-            showGutter={true}
-            highlightActiveLine={true}
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: false,
-              enableSnippets: false,
-              showLineNumbers: true,
-              tabSize: 2,
-              useWorker: false,
-            }}
-            style={{ borderRadius: "8px" }}
-          />
-        </div>
-      </div>
-      <div className="button-group">
-        <button onClick={onSetPress}>Set</button>
-        <button onClick={onGetPress}>Get</button>
-        <button onClick={onDeletePress}>Delete</button>
-      </div>
-    </div>
+    <FormContainer>
+      <Title>Key-Value Input</Title>
+      <EditorContainer>
+        <EditorInput label="Key:" value={key} onChange={setKey} />
+        <EditorInput label="Value:" value={value} onChange={setValue} />
+      </EditorContainer>
+      <ButtonGroup>
+        <Button onClick={onSetPress}>Set</Button>
+        <Button onClick={onGetPress}>Get</Button>
+        <Button onClick={onDeletePress}>Delete</Button>
+      </ButtonGroup>
+    </FormContainer>
   );
 }
 

@@ -12,7 +12,7 @@ Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key
 
 #### RoadMap 🚧
 
-1. Enhance interactive demo site (check out the wip [here](https://johnhaup.github.io/dope-map/))
+1. Enhance interactive demo site (check out the wip <a href="https://johnhaup.github.io/dope-map/" target="_blank">here</a>)
 2. Add `config` option to retain original keys
 3. Add `config` options to speed up hash time if consumer has some awareness of key shape (ex: object where only top level of keys matters)
 4. Obviously speed up hash time dang get off my case

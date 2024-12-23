@@ -4,7 +4,70 @@ import {
   dopeMapSizeAtom,
   jsMapEntriesArrayAtom,
   jsMapSizeAtom,
-} from "../atoms/state";
+} from "../atoms/derived";
+
+import styled from "styled-components";
+
+const SectionHeader = styled.h2`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const VisualizerContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+    gap: 0px;
+  }
+`;
+
+const OutputContainer = styled.div`
+  flex: 1;
+  background-color: #1e1e1e;
+  color: #dcdcdc;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: auto;
+  padding: 10px;
+  margin-bottom: 20px;
+`;
+
+const OutputHeader = styled.div`
+  position: relative;
+`;
+
+const MapHeader = styled.h3`
+  color: #4fa3d1;
+  margin: 0;
+`;
+
+const SizeContainer = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const MapOutput = styled.pre`
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  text-align: left;
+`;
 
 function MapVisualizer() {
   const mapData = useAtomValue(jsMapEntriesArrayAtom);
@@ -14,118 +77,31 @@ function MapVisualizer() {
 
   return (
     <div>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Map Visualization
-      </h2>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "10px",
-          alignItems: "stretch",
-          width: "100%",
-          height: "400px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: "#1e1e1e",
-            color: "#dcdcdc",
-            fontFamily: "Courier New, monospace",
-            fontSize: "14px",
-            border: "1px solid #333",
-            borderRadius: "4px",
-            overflow: "auto",
-            padding: "10px",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              flexShrink: 0,
-            }}
-          >
-            <h3 style={{ color: "#4fa3d1", margin: 0 }}>Map</h3>
-            <div
-              style={{
-                position: "absolute",
-                right: "0px",
-                top: "0px",
-                height: "100%",
-                justifyContent: "center",
-              }}
-            >
-              <h3
-                style={{
-                  color: "#4fa3d1",
-                  margin: 0,
-                }}
-              >{`Size: ${mapSize}`}</h3>
-            </div>
-          </div>
-          <pre
-            style={{
-              margin: 0,
-              whiteSpace: "pre-wrap",
-              wordWrap: "break-word",
-              lineHeight: "1.4",
-              textAlign: "left",
-            }}
-          >
-            {JSON.stringify(mapData, null, 2)}
-          </pre>
-        </div>
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: "#1e1e1e",
-            color: "#dcdcdc",
-            fontFamily: "Courier New, monospace",
-            fontSize: "14px",
-            border: "1px solid #333",
-            borderRadius: "4px",
-            overflow: "auto",
-            padding: "10px",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-            }}
-          >
-            <h3 style={{ color: "#3ca94b", margin: 0 }}>DopeMap</h3>
-            <div
-              style={{
-                position: "absolute",
-                right: "0px",
-                top: "0px",
-                height: "100%",
-                justifyContent: "center",
-              }}
-            >
-              <h3
+      <SectionHeader>Map Visualization</SectionHeader>
+      <VisualizerContainer>
+        <OutputContainer>
+          <OutputHeader>
+            <MapHeader>Map</MapHeader>
+            <SizeContainer>
+              <MapHeader>{`Size: ${mapSize}`}</MapHeader>
+            </SizeContainer>
+          </OutputHeader>
+          <MapOutput>{JSON.stringify(mapData, null, 2)}</MapOutput>
+        </OutputContainer>
+        <OutputContainer>
+          <OutputHeader>
+            <MapHeader style={{ color: "#3ca94b" }}>DopeMap</MapHeader>
+            <SizeContainer>
+              <MapHeader
                 style={{
                   color: "#3ca94b",
-                  margin: 0,
                 }}
-              >{`Size: ${dopeMapSize}`}</h3>
-            </div>
-          </div>
-          <pre
-            style={{
-              margin: 0,
-              whiteSpace: "pre-wrap",
-              wordWrap: "break-word",
-              lineHeight: "1.4",
-              textAlign: "left",
-            }}
-          >
-            {JSON.stringify(dopeMapData, null, 2)}
-          </pre>
-        </div>
-      </div>
+              >{`Size: ${dopeMapSize}`}</MapHeader>
+            </SizeContainer>
+          </OutputHeader>
+          <MapOutput>{JSON.stringify(dopeMapData, null, 2)}</MapOutput>
+        </OutputContainer>
+      </VisualizerContainer>
     </div>
   );
 }

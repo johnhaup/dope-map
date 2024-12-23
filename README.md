@@ -10,6 +10,13 @@ A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 
 Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
+#### RoadMap 🚧
+
+1. Enhance interactive demo site (check out the wip [here](https://johnhaup.github.io/dope-map/))
+2. Add `config` option to retain original keys
+3. Add `config` options to speed up hash time if consumer has some awareness of key shape (ex: object where only top level of keys matters)
+4. Obviously speed up hash time dang get off my case
+
 ## Installation
 
 ```bash
@@ -19,7 +26,7 @@ yarn add @johnhaup/dope-map hash-it
 ## Usage
 
 ```javascript
-import DopeMap from "dope-map";
+import DopeMap from "@johnhaup/dope-map";
 
 const dopeMap = new DopeMap();
 
@@ -48,7 +55,7 @@ console.log(map.get({ to: "fu", foo: "bar" })); // Output: undefined
 
 ```javascript
 // Custom hash function
-import DopeMap from "dope-map";
+import DopeMap from "@johnhaup/dope-map";
 import blazeHasher from "blazing-fast-hash-package";
 
 const dopeMap = new DopeMap({ hashFunction: blazeHasher });
@@ -56,33 +63,40 @@ const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 
 ## Benchmarks
 
+_Each Dope/Map grows to the entry size. Averages of method time are below._
+
 <!-- BENCHMARK RESULTS START -->
+
 #### Results for 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.001      | 0.072     | 0.071          |
-| Get       | 0.000      | 0.072     | 0.072          |
-| Delete    | 0.000      | 0.070     | 0.070          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.001    | 0.072        | 0.071           |
+| Get       | 0.000    | 0.072        | 0.072           |
+| Delete    | 0.000    | 0.070        | 0.070           |
 
 #### Results for 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.010      | 0.733     | 0.723          |
-| Get       | 0.000      | 0.705     | 0.705          |
-| Delete    | 0.005      | 0.718     | 0.713          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.010    | 0.733        | 0.723           |
+| Get       | 0.000    | 0.705        | 0.705           |
+| Delete    | 0.005    | 0.718        | 0.713           |
 
 #### Results for 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.163      | 7.741     | 7.578          |
-| Get       | 0.008      | 7.324     | 7.316          |
-| Delete    | 0.053      | 7.663     | 7.610          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 0.163    | 7.741        | 7.578           |
+| Get       | 0.008    | 7.324        | 7.316           |
+| Delete    | 0.053    | 7.663        | 7.610           |
 
 #### Results for 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 1.852      | 96.536     | 94.684          |
-| Get       | 0.406      | 92.808     | 92.402          |
-| Delete    | 0.552      | 78.975     | 78.423          |
+
+| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
+| --------- | -------- | ------------ | --------------- |
+| Set       | 1.852    | 96.536       | 94.684          |
+| Get       | 0.406    | 92.808       | 92.402          |
+| Delete    | 0.552    | 78.975       | 78.423          |
 
 <!-- BENCHMARK RESULTS END -->

@@ -1,0 +1,46 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://johnhaup.github.io/dope-map",
+  "dependencies": {
+    "@johnhaup/dope-map": "^1.0.5",
+    "ace-builds": "^1.37.1",
+    "cra-template-typescript": "1.2.0",
+    "hash-it": "^6.0.0",
+    "jotai": "^2.10.4",
+    "react": "^18.0.0",
+    "react-ace": "^13.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
+  }
+}

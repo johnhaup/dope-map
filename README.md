@@ -63,11 +63,6 @@ const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 
 ### API Reference
 
-The following table summarizes the **methods** and **properties** of `DopeMap`, along with their functionality. If a method behaves identically to JavaScript's native `Map`, it's marked ✅. If it has custom behavior, it's marked ❌.
-_Note that all DopeMap methods currently returns keys as their hashed value. Original key return option is upcoming._
-
-## DopeMap API Reference
-
 The following table summarizes the **methods** and **properties** of `DopeMap`, along with their functionality. If a method behaves identically to JavaScript's native `Map`, it's marked **✅**. If it extends `Map` functionality, it's marked **✅ + Extra**.
 _Note that all DopeMap methods currently return the hashed version of its keys. Support for an original value key option is upcoming!_
 

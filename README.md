@@ -13,7 +13,7 @@ Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key
 #### RoadMap 🚧
 
 1. Enhance interactive demo site (check out the wip <a href="https://johnhaup.github.io/dope-map/" target="_blank">here</a>)
-2. Add `config` option to retain original keys
+2. Add `config` option to make retaining original keys optional
 3. Add `config` options to speed up hash time if consumer has some awareness of key shape (ex: object where only top level of keys matters)
 4. Obviously speed up hash time dang get off my case
 
@@ -94,32 +94,32 @@ _Each Dope/Map grows to the entry size. Averages of method time are below._
 
 | Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
 | --------- | -------- | ------------ | --------------- |
-| Set       | 0.001    | 0.072        | 0.071           |
-| Get       | 0.000    | 0.072        | 0.072           |
-| Delete    | 0.000    | 0.070        | 0.070           |
+| Set       | 0.001    | 0.074        | 0.073           |
+| Get       | 0.000    | 0.074        | 0.074           |
+| Delete    | 0.000    | 0.072        | 0.071           |
 
 #### Results for 1,000 entries
 
 | Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
 | --------- | -------- | ------------ | --------------- |
-| Set       | 0.010    | 0.733        | 0.723           |
-| Get       | 0.000    | 0.705        | 0.705           |
+| Set       | 0.010    | 0.743        | 0.734           |
+| Get       | 0.000    | 0.789        | 0.789           |
 | Delete    | 0.005    | 0.718        | 0.713           |
 
 #### Results for 10,000 entries
 
 | Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
 | --------- | -------- | ------------ | --------------- |
-| Set       | 0.163    | 7.741        | 7.578           |
-| Get       | 0.008    | 7.324        | 7.316           |
-| Delete    | 0.053    | 7.663        | 7.610           |
+| Set       | 0.165    | 7.916        | 7.751           |
+| Get       | 0.007    | 7.692        | 7.684           |
+| Delete    | 0.054    | 7.313        | 7.259           |
 
 #### Results for 100,000 entries
 
 | Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
 | --------- | -------- | ------------ | --------------- |
-| Set       | 1.852    | 96.536       | 94.684          |
-| Get       | 0.406    | 92.808       | 92.402          |
-| Delete    | 0.552    | 78.975       | 78.423          |
+| Set       | 1.686    | 96.664       | 94.978          |
+| Get       | 0.323    | 96.374       | 96.052          |
+| Delete    | 0.565    | 79.796       | 79.231          |
 
 <!-- BENCHMARK RESULTS END -->

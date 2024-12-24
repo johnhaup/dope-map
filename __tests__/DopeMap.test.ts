@@ -71,7 +71,9 @@ describe("DopeMap", () => {
     expect(typeof map).toBe("object");
     expect(Object.keys(map).every((k) => typeof k === "string")).toBe(true);
     expect(
-      Object.values(map).every((v) => v === nirvanaValue || v === weezerValue)
+      Object.values(map).every(
+        (v) => v.v === nirvanaValue || v.v === weezerValue
+      )
     );
   });
 

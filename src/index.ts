@@ -3,6 +3,7 @@ import hashIt from "hash-it";
 type DopeKey = unknown;
 type HashedKey = string | number;
 type HashFunction = (args: unknown) => HashedKey;
+type MapEntry<V> = { k: DopeKey; v: V };
 
 interface DopeMapConfig {
   /**
@@ -12,7 +13,7 @@ interface DopeMapConfig {
 }
 
 export default class DopeMap<V> {
-  private dopeMap: Map<HashedKey, V>;
+  private dopeMap: Map<HashedKey, MapEntry<V>>;
   private hashFunction: HashFunction = hashIt;
   private primitiveKeys = new Set<HashedKey>(["string", "number"]);
 
@@ -45,24 +46,24 @@ export default class DopeMap<V> {
     return this.hashFunction(key);
   }
 
-  set(key: DopeKey, value: V): void {
-    const hashedKey = this.getHashedKey(key);
-    this.dopeMap.set(hashedKey, value);
+  set(k: DopeKey, v: V): void {
+    const hashedKey = this.getHashedKey(k);
+    this.dopeMap.set(hashedKey, { k, v });
   }
 
-  get(key: DopeKey) {
-    const hashedKey = this.getHashedKey(key);
+  get(k: DopeKey) {
+    const hashedKey = this.getHashedKey(k);
     const entry = this.dopeMap.get(hashedKey);
-    return entry;
+    return entry?.v;
   }
 
-  has(key: DopeKey) {
-    const hashedKey = this.getHashedKey(key);
+  has(k: DopeKey) {
+    const hashedKey = this.getHashedKey(k);
     return this.dopeMap.has(hashedKey);
   }
 
-  delete(key: DopeKey) {
-    const hashedKey = this.getHashedKey(key);
+  delete(k: DopeKey) {
+    const hashedKey = this.getHashedKey(k);
     return this.dopeMap.delete(hashedKey);
   }
 
@@ -74,7 +75,7 @@ export default class DopeMap<V> {
   }
 
   /**
-   * Returns the full Dope Map as an object.  Keys will be hashed keys.
+   * Returns the full Dope Map as an object
    */
   getMap() {
     return Object.fromEntries(this.dopeMap.entries());
@@ -84,36 +85,45 @@ export default class DopeMap<V> {
     return this.dopeMap.clear();
   }
 
-  entries(asArray: true): [HashedKey, V][];
-  entries(asArray?: false): IterableIterator<[HashedKey, V]>;
-  entries(
-    asArray?: boolean
-  ): [HashedKey, V][] | IterableIterator<[HashedKey, V]> {
-    if (asArray) {
-      return Array.from(this.dopeMap.entries());
-    }
-    return this.dopeMap.entries();
+  entries(asArray: true): [DopeKey, V][];
+  entries(asArray?: false): IterableIterator<[DopeKey, V]>;
+  entries(asArray?: boolean): [DopeKey, V][] | IterableIterator<[DopeKey, V]> {
+    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+      for (const { k, v } of map.values()) {
+        yield [k, v] as [DopeKey, V];
+      }
+    })(this.dopeMap);
+
+    return asArray ? Array.from(iterator) : iterator;
   }
 
-  forEach(...args: Parameters<Map<string | number, V>["forEach"]>) {
-    return this.dopeMap.forEach(...args);
+  forEach(callback: (value: V, key: DopeKey, map: this) => void): void {
+    for (const { k, v } of this.dopeMap.values()) {
+      callback(v, k, this);
+    }
   }
 
-  keys(asArray: true): HashedKey[];
-  keys(asArray?: false): IterableIterator<HashedKey>;
-  keys(asArray?: boolean): HashedKey[] | IterableIterator<HashedKey> {
-    if (asArray) {
-      return Array.from(this.dopeMap.keys());
-    }
-    return this.dopeMap.keys();
+  keys(asArray: true): DopeKey[];
+  keys(asArray?: false): IterableIterator<DopeKey>;
+  keys(asArray?: boolean): DopeKey[] | IterableIterator<DopeKey> {
+    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+      for (const { k } of map.values()) {
+        yield k;
+      }
+    })(this.dopeMap);
+
+    return asArray ? Array.from(iterator) : iterator;
   }
 
   values(asArray: true): V[];
   values(asArray?: false): IterableIterator<V>;
   values(asArray?: boolean): V[] | IterableIterator<V> {
-    if (asArray) {
-      return Array.from(this.dopeMap.values());
-    }
-    return this.dopeMap.values();
+    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+      for (const { v } of map.values()) {
+        yield v;
+      }
+    })(this.dopeMap);
+
+    return asArray ? Array.from(iterator) : iterator;
   }
 }

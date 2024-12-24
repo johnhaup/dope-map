@@ -1,7 +1,8 @@
+import { ToastContainer } from "react-toastify";
+import styled from "styled-components";
 import "./App.css";
 import KeyValueForm from "./components/KeyValueForm";
 import MapVisualizer from "./components/MapVisualizer";
-import styled from "styled-components";
 
 const AppWrapper = styled.div`
   max-width: 1200px;
@@ -24,6 +25,15 @@ function App() {
       <Dope src={require("./dope.jpg")} />
       <KeyValueForm />
       <MapVisualizer />
+      <ToastContainer
+        aria-label={"toast"}
+        position="bottom-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        theme="light"
+      />
     </AppWrapper>
   );
 }

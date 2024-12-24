@@ -64,25 +64,24 @@ const dopeMap = new DopeMap({ hashFunction: blazeHasher });
 ### API Reference
 
 The following table summarizes the **methods** and **properties** of `DopeMap`, along with their functionality. If a method behaves identically to JavaScript's native `Map`, it's marked **✅**. If it extends `Map` functionality, it's marked **✅ + Extra**.
-_Note that all DopeMap methods currently return the hashed version of its keys. Support for an original value key option is upcoming!_
 
-| **Method/Property**                                                                       | **Type**      | **Description**                                                          | **Same as Map?**                 |
-| ----------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------ | -------------------------------- |
-| **`constructor(config?: DopeMapConfig)`**                                                 | `constructor` | Initializes a new `DopeMap`. Optionally accepts a custom `hashFunction`. | ✅ + Extra (`hashFunction`)      |
-| **`set(key: DopeKey, value: V): void`**                                                   | `method`      | Sets a value for the given key.                                          | ✅ Same as `Map.set()`           |
-| **`get(key: DopeKey): V \| undefined`**                                                   | `method`      | Retrieves a value by its key.                                            | ✅ Same as `Map.get()`           |
-| **`has(key: DopeKey): boolean`**                                                          | `method`      | Checks if a key exists in the map.                                       | ✅ Same as `Map.has()`           |
-| **`delete(key: DopeKey): boolean`**                                                       | `method`      | Deletes a key-value pair from the map.                                   | ✅ Same as `Map.delete()`        |
-| **`clear(): void`**                                                                       | `method`      | Removes all key-value pairs from the map.                                | ✅ Same as `Map.clear()`         |
-| **`get size(): number`**                                                                  | `property`    | Returns the number of entries in the map.                                | ✅ Same as `Map.size`            |
-| **`getMap(): Record<HashedKey, V>`**                                                      | `method`      | Returns all entries as a plain object with hashed keys.                  | ✅ + Extra (Plain Object Output) |
-| **`entries(asArray: true): [HashedKey, V][]`**                                            | `method`      | Returns all entries as an array of `[key, value]` pairs.                 | ✅ + Extra (Array Support)       |
-| **`entries(asArray?: false): IterableIterator<[HashedKey, V]>`**                          | `method`      | Returns an iterator of `[key, value]` pairs.                             | ✅ Same as `Map.entries()`       |
-| **`forEach(callback: (value: V, key: HashedKey, map: Map<HashedKey, V>) => void): void`** | `method`      | Executes a callback for each key-value pair.                             | ✅ Same as `Map.forEach()`       |
-| **`keys(asArray: true): HashedKey[]`**                                                    | `method`      | Returns an array of keys.                                                | ✅ + Extra (Array Support)       |
-| **`keys(asArray?: false): IterableIterator<HashedKey>`**                                  | `method`      | Returns an iterator of keys.                                             | ✅ Same as `Map.keys()`          |
-| **`values(asArray: true): V[]`**                                                          | `method`      | Returns an array of values.                                              | ✅ + Extra (Array Support)       |
-| **`values(asArray?: false): IterableIterator<V>`**                                        | `method`      | Returns an iterator of values.                                           | ✅ Same as `Map.values()`        |
+| **Method/Property**                                                       | **Type**      | **Description**                                                          | **Same as Map?**                 |
+| ------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------ | -------------------------------- |
+| **`constructor(config?: DopeMapConfig)`**                                 | `constructor` | Initializes a new `DopeMap`. Optionally accepts a custom `hashFunction`. | ✅ + Extra (`hashFunction`)      |
+| **`set(key: K, value: V): void`**                                         | `method`      | Sets a value for the given key.                                          | ✅ Same as `Map.set()`           |
+| **`get(key: K): V \| undefined`**                                         | `method`      | Retrieves a value by its key.                                            | ✅ Same as `Map.get()`           |
+| **`has(key: K): boolean`**                                                | `method`      | Checks if a key exists in the map.                                       | ✅ Same as `Map.has()`           |
+| **`delete(key: K): boolean`**                                             | `method`      | Deletes a key-value pair from the map.                                   | ✅ Same as `Map.delete()`        |
+| **`clear(): void`**                                                       | `method`      | Removes all key-value pairs from the map.                                | ✅ Same as `Map.clear()`         |
+| **`get size(): number`**                                                  | `property`    | Returns the number of entries in the map.                                | ✅ Same as `Map.size`            |
+| **`getMap(): Record<K, V>`**                                              | `method`      | Returns all entries as a plain object with hashed keys.                  | ✅ + Extra (Plain Object Output) |
+| **`entries(asArray: true): [K, V][]`**                                    | `method`      | Returns all entries as an array of `[key, value]` pairs.                 | ✅ + Extra (Array Support)       |
+| **`entries(asArray?: false): IterableIterator<[K, V]>`**                  | `method`      | Returns an iterator of `[key, value]` pairs.                             | ✅ Same as `Map.entries()`       |
+| **`forEach(callback: (value: V, key: K, map: Map<K, V>) => void): void`** | `method`      | Executes a callback for each key-value pair.                             | ✅ Same as `Map.forEach()`       |
+| **`keys(asArray: true): K[]`**                                            | `method`      | Returns an array of keys.                                                | ✅ + Extra (Array Support)       |
+| **`keys(asArray?: false): IterableIterator<K>`**                          | `method`      | Returns an iterator of keys.                                             | ✅ Same as `Map.keys()`          |
+| **`values(asArray: true): V[]`**                                          | `method`      | Returns an array of values.                                              | ✅ + Extra (Array Support)       |
+| **`values(asArray?: false): IterableIterator<V>`**                        | `method`      | Returns an iterator of values.                                           | ✅ Same as `Map.values()`        |
 
 ## Benchmarks
 

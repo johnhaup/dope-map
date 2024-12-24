@@ -88,37 +88,60 @@ The following table summarizes the **methods** and **properties** of `DopeMap`, 
 _Each Dope/Map grows to the entry size. Averages of method time are below._
 
 <!-- BENCHMARK RESULTS START -->
+#### objects keys / 100 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.001      | 0.072     | 0.071          |
+| Get       | 0.000      | 0.072     | 0.072          |
+| Delete    | 0.000      | 0.071     | 0.071          |
 
-#### Results for 100 entries
+#### primitives keys / 100 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.000      | 0.000     | 0.000          |
+| Get       | 0.000      | 0.000     | 0.000          |
+| Delete    | 0.000      | 0.000     | -0.000          |
 
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.001    | 0.074        | 0.073           |
-| Get       | 0.000    | 0.074        | 0.074           |
-| Delete    | 0.000    | 0.072        | 0.071           |
+#### objects keys / 1,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.010      | 0.739     | 0.729          |
+| Get       | 0.001      | 0.733     | 0.732          |
+| Delete    | 0.005      | 0.716     | 0.710          |
 
-#### Results for 1,000 entries
+#### primitives keys / 1,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.002      | 0.002     | -0.000          |
+| Get       | 0.001      | 0.002     | 0.002          |
+| Delete    | 0.002      | 0.002     | -0.000          |
 
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.010    | 0.743        | 0.734           |
-| Get       | 0.000    | 0.789        | 0.789           |
-| Delete    | 0.005    | 0.718        | 0.713           |
+#### objects keys / 10,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.162      | 7.823     | 7.661          |
+| Get       | 0.008      | 7.749     | 7.741          |
+| Delete    | 0.052      | 7.302     | 7.250          |
 
-#### Results for 10,000 entries
+#### primitives keys / 10,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.023      | 0.022     | -0.000          |
+| Get       | 0.005      | 0.023     | 0.017          |
+| Delete    | 0.022      | 0.022     | -0.000          |
 
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 0.165    | 7.916        | 7.751           |
-| Get       | 0.007    | 7.692        | 7.684           |
-| Delete    | 0.054    | 7.313        | 7.259           |
+#### objects keys / 100,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 1.636      | 90.981     | 89.345          |
+| Get       | 0.314      | 87.615     | 87.301          |
+| Delete    | 0.556      | 77.312     | 76.757          |
 
-#### Results for 100,000 entries
-
-| Operation | Map (ms) | DopeMap (ms) | Difference (ms) |
-| --------- | -------- | ------------ | --------------- |
-| Set       | 1.686    | 96.664       | 94.978          |
-| Get       | 0.323    | 96.374       | 96.052          |
-| Delete    | 0.565    | 79.796       | 79.231          |
+#### primitives keys / 100,000 entries
+| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
+|-----------|-----------------|--------------|-----------------|
+| Set       | 0.224      | 0.225     | 0.002          |
+| Get       | 0.058      | 0.226     | 0.169          |
+| Delete    | 0.225      | 0.223     | -0.002          |
 
 <!-- BENCHMARK RESULTS END -->

@@ -33,80 +33,99 @@ function generateMixedKeys(size: number): object[] {
   return keys;
 }
 
+function generatePrimitiveKeys(size: number): string[] | number[] {
+  return new Array(size).map((s) => (s % 2 === 0 ? s : `${s}_${s}:wavves`));
+}
+
+const KEY_CONFIGS = [
+  {
+    title: "objects",
+    generateKeys: generateMixedKeys,
+  },
+  {
+    title: "primitives",
+    generateKeys: generatePrimitiveKeys,
+  },
+];
+
 const resultsTable: string[] = [];
 
 SIZES.forEach((size) => {
-  console.log(`Running benchmarks for size: ${size} entries with mixed keys`);
-  const suite = new Benchmark.Suite();
+  KEY_CONFIGS.forEach(({ title, generateKeys }) => {
+    console.log(
+      `\nRunning benchmarks for size: ${size} entries with ${title} keys`
+    );
+    const suite = new Benchmark.Suite();
 
-  const nativeMap = new Map<object, string>();
-  const customMap = new DopeMap<string>();
+    const nativeMap = new Map<object, string>();
+    const customMap = new DopeMap<string>();
 
-  const objectKeys = generateMixedKeys(size);
-  const testValue = "testValue";
+    const generatedKeys = generateKeys(size);
+    const testValue = "testValue";
 
-  suite
-    .add(`Map - Set (${size} entries)`, function () {
-      objectKeys.forEach((key) => nativeMap.set(key, testValue));
-    })
-    .add(`DopeMap - Set (${size} entries)`, function () {
-      objectKeys.forEach((key) => customMap.set(key, testValue));
-    })
-    .add(`Map - Get (${size} entries)`, function () {
-      objectKeys.forEach((key) => nativeMap.get(key));
-    })
-    .add(`DopeMap - Get (${size} entries)`, function () {
-      objectKeys.forEach((key) => customMap.get(key));
-    })
-    .add(`Map - Delete (${size} entries)`, function () {
-      objectKeys.forEach((key) => nativeMap.delete(key));
-    })
-    .add(`DopeMap - Delete (${size} entries)`, function () {
-      objectKeys.forEach((key) => customMap.delete(key));
-    })
-    .on("complete", function () {
-      console.log(`Results for ${size} entries:\n`);
+    suite
+      .add(`Map - Set (${size} entries)`, function () {
+        generatedKeys.forEach((key) => nativeMap.set(key, testValue));
+      })
+      .add(`DopeMap - Set (${size} entries)`, function () {
+        generatedKeys.forEach((key) => customMap.set(key, testValue));
+      })
+      .add(`Map - Get (${size} entries)`, function () {
+        generatedKeys.forEach((key) => nativeMap.get(key));
+      })
+      .add(`DopeMap - Get (${size} entries)`, function () {
+        generatedKeys.forEach((key) => customMap.get(key));
+      })
+      .add(`Map - Delete (${size} entries)`, function () {
+        generatedKeys.forEach((key) => nativeMap.delete(key));
+      })
+      .add(`DopeMap - Delete (${size} entries)`, function () {
+        generatedKeys.forEach((key) => customMap.delete(key));
+      })
+      .on("complete", function () {
+        console.log(`Results for ${size} entries:`);
 
-      const results: { [name: string]: number } = {};
+        const results: { [name: string]: number } = {};
 
-      this.forEach((bench: Target) => {
-        if (bench.hz && bench.name) {
-          const opsPerSec = bench.hz;
-          const avgTimeMs = (1 / opsPerSec) * 1000;
-          results[bench.name] = avgTimeMs;
+        this.forEach((bench: Target) => {
+          if (bench.hz && bench.name) {
+            const opsPerSec = bench.hz;
+            const avgTimeMs = (1 / opsPerSec) * 1000;
+            results[bench.name] = avgTimeMs;
 
-          console.log(
-            `${bench.name}: ${opsPerSec.toFixed(
-              2
-            )} ops/sec (${avgTimeMs.toFixed(4)} ms per operation)`
-          );
-        }
-      });
+            console.log(
+              `${bench.name}: ${opsPerSec.toFixed(
+                2
+              )} ops/sec (${avgTimeMs.toFixed(4)} ms per operation)`
+            );
+          }
+        });
 
-      const nativeSet = results[`Map - Set (${size} entries)`];
-      const dopeSet = results[`DopeMap - Set (${size} entries)`];
-      const nativeGet = results[`Map - Get (${size} entries)`];
-      const dopeGet = results[`DopeMap - Get (${size} entries)`];
-      const nativeDelete = results[`Map - Delete (${size} entries)`];
-      const dopeDelete = results[`DopeMap - Delete (${size} entries)`];
+        const nativeSet = results[`Map - Set (${size} entries)`];
+        const dopeSet = results[`DopeMap - Set (${size} entries)`];
+        const nativeGet = results[`Map - Get (${size} entries)`];
+        const dopeGet = results[`DopeMap - Get (${size} entries)`];
+        const nativeDelete = results[`Map - Delete (${size} entries)`];
+        const dopeDelete = results[`DopeMap - Delete (${size} entries)`];
 
-      resultsTable.push(
-        `#### Results for ${size.toLocaleString()} entries`,
-        `| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |`,
-        `|-----------|-----------------|--------------|-----------------|`,
-        `| Set       | ${nativeSet.toFixed(3)}      | ${dopeSet.toFixed(
-          3
-        )}     | ${(dopeSet - nativeSet).toFixed(3)}          |`,
-        `| Get       | ${nativeGet.toFixed(3)}      | ${dopeGet.toFixed(
-          3
-        )}     | ${(dopeGet - nativeGet).toFixed(3)}          |`,
-        `| Delete    | ${nativeDelete.toFixed(3)}      | ${dopeDelete.toFixed(
-          3
-        )}     | ${(dopeDelete - nativeDelete).toFixed(3)}          |`,
-        ``
-      );
-    })
-    .run({ async: false }); // Ensure benchmarks run sequentially
+        resultsTable.push(
+          `#### ${title} keys / ${size.toLocaleString()} entries`,
+          `| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |`,
+          `|-----------|-----------------|--------------|-----------------|`,
+          `| Set       | ${nativeSet.toFixed(3)}      | ${dopeSet.toFixed(
+            3
+          )}     | ${(dopeSet - nativeSet).toFixed(3)}          |`,
+          `| Get       | ${nativeGet.toFixed(3)}      | ${dopeGet.toFixed(
+            3
+          )}     | ${(dopeGet - nativeGet).toFixed(3)}          |`,
+          `| Delete    | ${nativeDelete.toFixed(3)}      | ${dopeDelete.toFixed(
+            3
+          )}     | ${(dopeDelete - nativeDelete).toFixed(3)}          |`,
+          ``
+        );
+      })
+      .run({ async: false }); // Ensure benchmarks run sequentially
+  });
 });
 
 const __filename = fileURLToPath(import.meta.url);

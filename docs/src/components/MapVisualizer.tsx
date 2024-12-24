@@ -7,6 +7,7 @@ import {
 } from "../atoms/derived";
 
 import styled from "styled-components";
+import { MapOutput } from "./MapOutput";
 
 const SectionHeader = styled.h2`
   text-align: center;
@@ -61,12 +62,10 @@ const SizeContainer = styled.div`
   justify-content: center;
 `;
 
-const MapOutput = styled.pre`
-  margin: 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  line-height: 1.4;
-  text-align: left;
+const Hint = styled.p`
+  font-size: 12px;
+  font-style: italic;
+  margin: undefined;
 `;
 
 function MapVisualizer() {
@@ -78,6 +77,7 @@ function MapVisualizer() {
   return (
     <div>
       <SectionHeader>Map Visualization</SectionHeader>
+      <Hint>Click on a key to copy it to the clipboard</Hint>
       <VisualizerContainer>
         <OutputContainer>
           <OutputHeader>
@@ -86,7 +86,7 @@ function MapVisualizer() {
               <MapHeader>{`Size: ${mapSize}`}</MapHeader>
             </SizeContainer>
           </OutputHeader>
-          <MapOutput>{JSON.stringify(mapData, null, 2)}</MapOutput>
+          <MapOutput data={mapData} />
         </OutputContainer>
         <OutputContainer>
           <OutputHeader>
@@ -99,7 +99,7 @@ function MapVisualizer() {
               >{`Size: ${dopeMapSize}`}</MapHeader>
             </SizeContainer>
           </OutputHeader>
-          <MapOutput>{JSON.stringify(dopeMapData, null, 2)}</MapOutput>
+          <MapOutput data={dopeMapData} />
         </OutputContainer>
       </VisualizerContainer>
     </div>

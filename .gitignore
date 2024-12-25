@@ -1,1 +1,5 @@
 node_modules
+rust_hash/pkg
+rust_hash/target
+rust_hash/Cargo.lock
+!rust_hash/pkg/package.json

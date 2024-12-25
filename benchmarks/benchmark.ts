@@ -1,10 +1,15 @@
 import Benchmark, { Target } from "benchmark";
 import DopeMap from "../src";
+import FastMap from "../src/v2";
+import { ensureInitialized } from "../src/hasher";
+
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const SIZES = [100, 1_000, 10_000, 100_000];
+await ensureInitialized();
+
+const SIZES = [100, 1_000];
 
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
@@ -59,6 +64,7 @@ SIZES.forEach((size) => {
 
     const nativeMap = new Map<object, string>();
     const customMap = new DopeMap<string>();
+    const v2Map = new FastMap<string>();
 
     const generatedKeys = generateKeys(size);
     const testValue = "testValue";
@@ -70,17 +76,26 @@ SIZES.forEach((size) => {
       .add(`DopeMap - Set (${size} entries)`, function () {
         generatedKeys.forEach((key) => customMap.set(key, testValue));
       })
+      .add(`DopeMap v2 - Set (${size} entries)`, function () {
+        generatedKeys.forEach((key) => v2Map.set(key, testValue));
+      })
       .add(`Map - Get (${size} entries)`, function () {
         generatedKeys.forEach((key) => nativeMap.get(key));
       })
       .add(`DopeMap - Get (${size} entries)`, function () {
         generatedKeys.forEach((key) => customMap.get(key));
       })
+      .add(`DopeMap v2 - Get (${size} entries)`, function () {
+        generatedKeys.forEach((key) => v2Map.get(key));
+      })
       .add(`Map - Delete (${size} entries)`, function () {
         generatedKeys.forEach((key) => nativeMap.delete(key));
       })
       .add(`DopeMap - Delete (${size} entries)`, function () {
         generatedKeys.forEach((key) => customMap.delete(key));
+      })
+      .add(`DopeMap v2 - Delete (${size} entries)`, function () {
+        generatedKeys.forEach((key) => v2Map.delete(key));
       })
       .on("complete", function () {
         console.log(`Results for ${size} entries:`);
@@ -103,24 +118,33 @@ SIZES.forEach((size) => {
 
         const nativeSet = results[`Map - Set (${size} entries)`];
         const dopeSet = results[`DopeMap - Set (${size} entries)`];
+        const dopeSetv2 = results[`DopeMap v2 - Set (${size} entries)`];
         const nativeGet = results[`Map - Get (${size} entries)`];
         const dopeGet = results[`DopeMap - Get (${size} entries)`];
+        const dopeGetv2 = results[`DopeMap v2 - Get (${size} entries)`];
         const nativeDelete = results[`Map - Delete (${size} entries)`];
         const dopeDelete = results[`DopeMap - Delete (${size} entries)`];
+        const dopeDeletev2 = results[`DopeMap v2 - Delete (${size} entries)`];
 
         resultsTable.push(
           `#### ${title} keys / ${size.toLocaleString()} entries`,
-          `| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |`,
+          `| Operation |  Map (ms) | DopeMap (ms) |  DopeMap V2 (ms) | Difference (ms) |`,
           `|-----------|-----------------|--------------|-----------------|`,
           `| Set       | ${nativeSet.toFixed(3)}      | ${dopeSet.toFixed(
             3
-          )}     | ${(dopeSet - nativeSet).toFixed(3)}          |`,
+          )}     |  ${dopeSetv2.toFixed(3)}     |${(
+            dopeSet - nativeSet
+          ).toFixed(3)}          |`,
           `| Get       | ${nativeGet.toFixed(3)}      | ${dopeGet.toFixed(
             3
-          )}     | ${(dopeGet - nativeGet).toFixed(3)}          |`,
+          )}     |  ${dopeGetv2.toFixed(3)}     |${(
+            dopeGet - nativeGet
+          ).toFixed(3)}          |`,
           `| Delete    | ${nativeDelete.toFixed(3)}      | ${dopeDelete.toFixed(
             3
-          )}     | ${(dopeDelete - nativeDelete).toFixed(3)}          |`,
+          )}     | ${(dopeDelete - nativeDelete).toFixed(3)}          | ${(
+            dopeDeletev2 - nativeDelete
+          ).toFixed(3)}          |`,
           ``
         );
       })

@@ -10,8 +10,9 @@
     "strict": true,
     "esModuleInterop": true,
     "importHelpers": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vitest", "node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "__tests__/**/*.test.ts"],
   "exclude": ["node_modules", "dist"]
 }

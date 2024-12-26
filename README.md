@@ -91,29 +91,29 @@ _Each Dope/Map grows to the entry size. Averages of method time are below._
 #### objects keys / 100 entries
 | Operation |  Map (ms) | DopeMap (ms) |  DopeMap V2 (ms) | Difference (ms) |
 |-----------|-----------------|--------------|-----------------|
-| Set       | 0.001      | 0.069     |  0.106     |0.068          |
-| Get       | 0.000      | 0.069     |  0.105     |0.069          |
-| Delete    | 0.000      | 0.067     | 0.067          | 0.103          |
+| Set       | 0.001      | 0.074     |  0.326     |0.074          |
+| Get       | 0.000      | 0.075     |  0.326     |0.075          |
+| Delete    | 0.000      | 0.073     | 0.072          | 0.322          |
 
 #### primitives keys / 100 entries
 | Operation |  Map (ms) | DopeMap (ms) |  DopeMap V2 (ms) | Difference (ms) |
 |-----------|-----------------|--------------|-----------------|
 | Set       | 0.000      | 0.000     |  0.000     |-0.000          |
 | Get       | 0.000      | 0.000     |  0.000     |0.000          |
-| Delete    | 0.000      | 0.000     | -0.000          | -0.000          |
+| Delete    | 0.000      | 0.000     | -0.000          | 0.000          |
 
 #### objects keys / 1,000 entries
 | Operation |  Map (ms) | DopeMap (ms) |  DopeMap V2 (ms) | Difference (ms) |
 |-----------|-----------------|--------------|-----------------|
-| Set       | 0.010      | 0.708     |  1.106     |0.698          |
-| Get       | 0.001      | 0.756     |  1.136     |0.755          |
-| Delete    | 0.005      | 0.689     | 0.684          | 1.090          |
+| Set       | 0.010      | 0.763     |  3.299     |0.752          |
+| Get       | 0.001      | 0.763     |  3.290     |0.762          |
+| Delete    | 0.005      | 0.746     | 0.741          | 3.256          |
 
 #### primitives keys / 1,000 entries
 | Operation |  Map (ms) | DopeMap (ms) |  DopeMap V2 (ms) | Difference (ms) |
 |-----------|-----------------|--------------|-----------------|
 | Set       | 0.002      | 0.002     |  0.002     |-0.000          |
 | Get       | 0.001      | 0.002     |  0.002     |0.001          |
-| Delete    | 0.002      | 0.002     | -0.000          | -0.000          |
+| Delete    | 0.002      | 0.002     | -0.000          | 0.000          |
 
 <!-- BENCHMARK RESULTS END -->

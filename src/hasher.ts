@@ -1,7 +1,7 @@
-import init, { hash_string } from "../rust_hash/pkg/rust_hash.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import init from "../rust_hash/pkg/rust_hash.js";
 
 // Manually define __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -35,12 +35,4 @@ export async function ensureInitialized() {
   }
 
   await initPromise;
-}
-
-/**
- * Safe Hashing Function (Ensures Initialization First)
- */
-export async function safeHashString(input: string): Promise<string> {
-  await ensureInitialized(); // Guarantee WASM is ready
-  return hash_string(input);
 }

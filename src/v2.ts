@@ -1,9 +1,9 @@
-import init, { hash_string } from "rust-hash";
+import { hash_js_object } from "rust-hash";
 import { HashedKey, MapEntry, DopeKey } from "./types.js";
 
 export default class FastMap<V> {
   private dopeMap: Map<HashedKey, MapEntry<V>>;
-  private hashFunction = hash_string;
+  private hashFunction = hash_js_object;
   private primitiveKeys = new Set<HashedKey>(["string", "number"]);
 
   constructor() {
@@ -25,44 +25,7 @@ export default class FastMap<V> {
       return key;
     }
 
-    const serializedKey = this.stableStringify(key);
-    return this.hashFunction(serializedKey);
-  }
-
-  /**
-   * Ensure consistent serialization of objects
-   */
-  private stableStringify(obj: DopeKey, seen = new WeakSet()): string {
-    if (obj === null) return "null";
-    if (typeof obj === "number" || typeof obj === "boolean")
-      return obj.toString();
-    if (typeof obj === "string") return `"${obj}"`;
-    if (typeof obj === "function") return "function";
-    if (typeof obj === "undefined") return "undefined";
-
-    if (seen.has(obj)) return '"[Circular]"';
-    seen.add(obj);
-
-    if (Array.isArray(obj)) {
-      return `[${obj
-        .map((item) => this.stableStringify(item, seen))
-        .join(",")}]`;
-    }
-
-    if (typeof obj === "object") {
-      const keys = Object.keys(obj).sort();
-      return `{${keys
-        .map(
-          (key) =>
-            `"${key}":${this.stableStringify(
-              (obj as { [key: string]: unknown })[key],
-              seen
-            )}`
-        )
-        .join(",")}}`;
-    }
-
-    return String(obj);
+    return this.hashFunction(key);
   }
 
   /**
@@ -70,6 +33,7 @@ export default class FastMap<V> {
    */
   set(k: DopeKey, v: V): void {
     const hashedKey = this.getHashedKey(k);
+
     this.dopeMap.set(hashedKey, { k, v });
   }
 

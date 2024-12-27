@@ -1,14 +1,19 @@
-import DopeMap from "../src/index";
+import DopeMapV1 from "../src/v1";
+import DopeMapV2 from "../src/dopeMap";
 import {
   nirvanaKey,
   nirvanaValue,
   weezerKey,
   weezerValue,
 } from "../__fixtures__";
+import { describe, beforeAll, it, expect } from "vitest";
 
-describe("Array arguments", () => {
+describe.each([
+  ["DopeMap v1", DopeMapV1],
+  ["DopeMap v2", DopeMapV2],
+])("%s", (name, DopeMap) => {
   type TestValue = { [key: number]: string };
-  let dopeMap: DopeMap<TestValue>;
+  let dopeMap: InstanceType<typeof DopeMap<TestValue>>;
 
   beforeAll(() => {
     dopeMap = new DopeMap<TestValue>();

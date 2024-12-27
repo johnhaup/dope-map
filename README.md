@@ -89,59 +89,17 @@ _Each Dope/Map grows to the entry size. Averages of method time are below._
 
 <!-- BENCHMARK RESULTS START -->
 #### objects keys / 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.001      | 0.072     | 0.071          |
-| Get       | 0.000      | 0.072     | 0.072          |
-| Delete    | 0.000      | 0.071     | 0.071          |
+| Operation | Map (ms) | DopeMap (ms) | V2 (ms) | V2 - sortKeys (ms) | V2 - handleCycles (ms) |
+|-----------|-----------|-----------|-----------|-----------|-----------|
+| Set | 0.001 | 0.069 (+0.068) | 0.049 (+0.049) | N/A (-0.000) | N/A (-0.000) | |
+| Get | 0.000 | 0.068 (+0.068) | 0.049 (+0.049) | N/A (-0.000) | N/A (-0.000) | |
+| Delete | 0.000 | 0.067 (+0.066) | 0.039 (+0.038) | N/A (-0.000) | N/A (-0.000) | |
 
 #### primitives keys / 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.000      | 0.000     | 0.000          |
-| Get       | 0.000      | 0.000     | 0.000          |
-| Delete    | 0.000      | 0.000     | -0.000          |
-
-#### objects keys / 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.010      | 0.739     | 0.729          |
-| Get       | 0.001      | 0.733     | 0.732          |
-| Delete    | 0.005      | 0.716     | 0.710          |
-
-#### primitives keys / 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.002      | 0.002     | -0.000          |
-| Get       | 0.001      | 0.002     | 0.002          |
-| Delete    | 0.002      | 0.002     | -0.000          |
-
-#### objects keys / 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.162      | 7.823     | 7.661          |
-| Get       | 0.008      | 7.749     | 7.741          |
-| Delete    | 0.052      | 7.302     | 7.250          |
-
-#### primitives keys / 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.023      | 0.022     | -0.000          |
-| Get       | 0.005      | 0.023     | 0.017          |
-| Delete    | 0.022      | 0.022     | -0.000          |
-
-#### objects keys / 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 1.636      | 90.981     | 89.345          |
-| Get       | 0.314      | 87.615     | 87.301          |
-| Delete    | 0.556      | 77.312     | 76.757          |
-
-#### primitives keys / 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.224      | 0.225     | 0.002          |
-| Get       | 0.058      | 0.226     | 0.169          |
-| Delete    | 0.225      | 0.223     | -0.002          |
+| Operation | Map (ms) | DopeMap (ms) | V2 (ms) | V2 - sortKeys (ms) | V2 - handleCycles (ms) |
+|-----------|-----------|-----------|-----------|-----------|-----------|
+| Set | 0.001 | 0.002 (+0.001) | 0.002 (+0.001) | N/A (-0.000) | N/A (-0.000) | |
+| Get | 0.000 | 0.001 (+0.001) | 0.001 (+0.001) | N/A (-0.000) | N/A (-0.000) | |
+| Delete | 0.000 | 0.001 (+0.001) | 0.001 (+0.000) | N/A (-0.000) | N/A (-0.000) | |
 
 <!-- BENCHMARK RESULTS END -->

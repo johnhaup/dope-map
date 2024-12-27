@@ -10,13 +10,15 @@ import {
 
 export default class DopeMap<V> {
   private dopeMap: Map<HashedKey, MapEntry<V>>;
-  private primitiveKeys = new Set<HashedKey>(["string", "number"]);
+  private hashKeyMap: Map<DopeKey, HashedKey>;
+
   private hashFunction: HashFunction = dopeHash;
   private hashConfig: HashConfig | undefined = undefined;
 
   constructor(config: DopeMapConfig = {}) {
     this.handleConfig(config);
     this.dopeMap = new Map();
+    this.hashKeyMap = new Map();
   }
 
   private handleConfig(config?: DopeMapConfig) {
@@ -33,13 +35,9 @@ export default class DopeMap<V> {
     }
   }
 
-  private isHashedKey(key: DopeKey): key is HashedKey {
-    return this.primitiveKeys.has(typeof key);
-  }
-
   private getHashedKey(key: DopeKey) {
-    if (this.isHashedKey(key)) {
-      return key;
+    if (this.hashKeyMap.has(key)) {
+      return this.hashKeyMap.get(key) as string;
     }
 
     return this.hashFunction(key, this.hashConfig);
@@ -48,6 +46,7 @@ export default class DopeMap<V> {
   set(k: DopeKey, v: V): void {
     const hashedKey = this.getHashedKey(k);
     this.dopeMap.set(hashedKey, { k, v });
+    this.hashKeyMap.set(k, hashedKey);
   }
 
   get(k: DopeKey) {
@@ -74,13 +73,21 @@ export default class DopeMap<V> {
   }
 
   /**
-   * Returns the full Dope Map as an object
+   * Returns size of dope map plus its internal hash map
+   */
+  getTotalSize() {
+    return this.dopeMap.size + this.hashKeyMap.size;
+  }
+
+  /**
+   * Returns an object in a hashedKey: value shape.
    */
   getMap() {
     return Object.fromEntries(this.dopeMap.entries());
   }
 
   clear() {
+    this.hashKeyMap.clear();
     return this.dopeMap.clear();
   }
 

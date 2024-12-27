@@ -1,12 +1,12 @@
 import Benchmark, { Target } from "benchmark";
-import DopeMap from "../src/v1";
-import DopeMapV2 from "../src/dopeMap";
+import DopeMapV1 from "../src/v1";
+import DopeMap from "../src/dopeMap";
 
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const SIZES = [100];
+const SIZES = [100, 1_000, 10_000, 100_000];
 
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
@@ -35,7 +35,7 @@ function generateMixedKeys(size: number): object[] {
   return keys;
 }
 
-function generatePrimitiveKeys(size: number): string[] | number[] {
+function generatePrimitiveKeys(size: number): (string | number)[] {
   return Array.from({ length: size }, (_, s) =>
     s % 2 === 0 ? s : `${s}_${s}:wavves`
   );
@@ -52,26 +52,23 @@ const KEY_CONFIGS = [
   },
 ];
 
-// 🛠️ Define Map Implementations
 const MAP_IMPLEMENTATIONS = [
   { name: "Map", instance: () => new Map<object, string>() },
-  { name: "DopeMap", instance: () => new DopeMap<string>() },
+  { name: "DopeMap\nV1 Legacy", instance: () => new DopeMapV1<string>() },
   {
-    name: "V2",
-    instance: () => new DopeMapV2<string>(),
+    name: "DopeMap",
+    instance: () => new DopeMap<string>(),
   },
   {
-    name: "V2 - sortKeys",
-    instance: () => new DopeMapV2<string>({ hashConfig: { sortKeys: true } }),
+    name: "DopeMap\n{ sortKeys: true }",
+    instance: () => new DopeMap<string>({ hashConfig: { sortKeys: true } }),
   },
   {
-    name: "V2 - handleCycles",
-    instance: () =>
-      new DopeMapV2<string>({ hashConfig: { handleCycles: true } }),
+    name: "DopeMap\n{ handleCycles: true }",
+    instance: () => new DopeMap<string>({ hashConfig: { handleCycles: true } }),
   },
 ];
 
-// 📝 Results table
 const resultsTable: string[] = [];
 
 SIZES.forEach((size) => {
@@ -87,27 +84,31 @@ SIZES.forEach((size) => {
     const operationResults: Record<string, Record<string, number>> = {
       Set: {},
       Get: {},
+      Has: {},
       Delete: {},
     };
 
     MAP_IMPLEMENTATIONS.forEach(({ name, instance }) => {
       const mapInstance = instance();
 
-      // Separate benchmark for Set operation
       suite.add(`${name} - Set`, function () {
         generatedKeys.forEach((key) => {
           mapInstance.set(key, testValue);
         });
       });
 
-      // Separate benchmark for Get operation
       suite.add(`${name} - Get`, function () {
         generatedKeys.forEach((key) => {
           mapInstance.get(key);
         });
       });
 
-      // Separate benchmark for Delete operation
+      suite.add(`${name} - Has`, function () {
+        generatedKeys.forEach((key) => {
+          mapInstance.has(key);
+        });
+      });
+
       suite.add(`${name} - Delete`, function () {
         generatedKeys.forEach((key) => {
           mapInstance.delete(key);
@@ -158,7 +159,7 @@ SIZES.forEach((size) => {
           )}|`
         );
 
-        ["Set", "Get", "Delete"].forEach((operation) => {
+        ["Set", "Get", "Has", "Delete"].forEach((operation) => {
           const row = [`| ${operation}`];
           MAP_IMPLEMENTATIONS.forEach(({ name }) => {
             const current =
@@ -183,7 +184,6 @@ SIZES.forEach((size) => {
   });
 });
 
-// 📝 Update README
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

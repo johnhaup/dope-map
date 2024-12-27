@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 
 const SIZES = [100, 1_000, 10_000, 100_000];
 
+const formatMs = (ms: number) => (ms > 0 ? ms.toFixed(1) : ms.toFixed(3));
+
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
   const duplicates = Math.floor(size / 2);
@@ -54,18 +56,10 @@ const KEY_CONFIGS = [
 
 const MAP_IMPLEMENTATIONS = [
   { name: "Map", instance: () => new Map<object, string>() },
-  { name: "DopeMap\nV1 Legacy", instance: () => new DopeMapV1<string>() },
+  { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
   {
-    name: "DopeMap",
+    name: "DopeMap V2",
     instance: () => new DopeMap<string>(),
-  },
-  {
-    name: "DopeMap\n{ sortKeys: true }",
-    instance: () => new DopeMap<string>({ hashConfig: { sortKeys: true } }),
-  },
-  {
-    name: "DopeMap\n{ handleCycles: true }",
-    instance: () => new DopeMap<string>({ hashConfig: { handleCycles: true } }),
   },
 ];
 
@@ -146,7 +140,7 @@ SIZES.forEach((size) => {
         });
 
         resultsTable.push(
-          `#### ${title} keys / ${size.toLocaleString()} entries`
+          `#### ${title.toLocaleUpperCase()} keys / ${size.toLocaleString()} entries`
         );
         resultsTable.push(
           `| Operation | ${MAP_IMPLEMENTATIONS.map(
@@ -162,17 +156,16 @@ SIZES.forEach((size) => {
         ["Set", "Get", "Has", "Delete"].forEach((operation) => {
           const row = [`| ${operation}`];
           MAP_IMPLEMENTATIONS.forEach(({ name }) => {
-            const current =
-              operationResults[operation][name]?.toFixed(3) || "N/A";
+            const current = operationResults[operation][name];
             const baseline = baselineResults[operation] || 0;
             const difference =
               baseline && operationResults[operation][name]
                 ? operationResults[operation][name] - baseline
                 : 0;
-            const diffString = ` (${
-              difference > 0 ? "+" : "-"
-            }${difference.toFixed(3)})`;
-            row.push(`${current}${name === "Map" ? "" : diffString}`);
+            const diffString = ` (${difference > 0 ? "+" : "-"}${formatMs(
+              difference
+            )})`;
+            row.push(`${formatMs(current)}${name === "Map" ? "" : diffString}`);
           });
           row.push("|");
           resultsTable.push(row.join(" | "));

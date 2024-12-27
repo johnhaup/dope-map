@@ -1,7 +1,7 @@
 export function dopeHash(
   value: unknown,
   options: { sortKeys?: boolean; handleCycles?: boolean } = {
-    sortKeys: false,
+    sortKeys: true,
     handleCycles: false,
   },
   stack = new WeakSet()

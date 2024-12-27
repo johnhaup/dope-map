@@ -1,7 +1,7 @@
 export type HashConfig = {
   /**
-   * Set to true if your keys are objects in which you can't guarantee their key order.  Adds some performance overhead.
-   * Defaults to false.
+   * Set to false if you are confident you can guarante your object keys' key order.
+   * Defaults to true.
    */
   sortKeys?: boolean;
   /**
@@ -25,7 +25,7 @@ type DopeMapCustomHashConfig = {
 
 type DopeMapHashOptionsConfig = {
   /**
-   * Optionally toggle on key sorting and circular reference handling. Cannot be combined with hashFunction.
+   * Optionally toggle off key sorting or on circular reference handling. Cannot be combined with hashFunction.
    */
   hashConfig?: HashConfig;
   hashFunction?: never;

@@ -39,7 +39,7 @@ describe.each([
   });
 
   it("adds initial entries", () => {
-    const customHashMap = new DopeMap<any>([[1, 2]]);
+    const customHashMap = new DopeMap<number>([[1, 2]]);
     expect(customHashMap.has(1)).toBe(true);
     expect(customHashMap.get(1)).toBe(2);
   });

@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import DopeMap from "../src/dopeMap";
+import Dist from "../dist/index.cjs.js";
+const DopeDist = Dist.default as unknown as typeof DopeMap;
+
 import {
   nirvanaKey,
   nirvanaValue,
@@ -7,7 +10,10 @@ import {
   weezerValue,
 } from "../__fixtures__";
 
-describe.each([["DopeMap", DopeMap]])("%s", (name, DopeMap) => {
+describe.each([
+  ["DopeMap", DopeMap],
+  ["Dist CJS", DopeDist],
+])("%s", (name, DopeMap) => {
   type TestValue = { [key: number]: string };
   let dopeMap: InstanceType<typeof DopeMap<TestValue>>;
 

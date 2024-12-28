@@ -9,8 +9,10 @@ import { fileURLToPath } from "url";
 
 const SIZES = [100, 1_000, 10_000, 100_000];
 
-const formatMs = (ms: number) =>
-  ms < 1 && ms > -1 ? ms.toFixed(3) : ms.toFixed(1);
+const formatMs = (ms: number) => {
+  return ms < 1 && ms > -1 && ms !== 0 ? ms.toFixed(3) : ms.toFixed(1);
+};
+const roundMs = (ms: number) => Math.round(ms * 1000) / 1000;
 
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
@@ -45,6 +47,8 @@ function generatePrimitiveKeys(size: number): (string | number)[] {
   );
 }
 
+const METHODS = ["Set", "Get", "Has", "Delete"];
+
 const KEY_CONFIGS = [
   {
     title: "objects",
@@ -58,7 +62,6 @@ const KEY_CONFIGS = [
 
 const MAP_IMPLEMENTATIONS = [
   { name: "Map", instance: () => new Map<object, string>() },
-  { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
   {
     name: "DopeMap",
     instance: () => new DopeMap<string>(),
@@ -67,6 +70,7 @@ const MAP_IMPLEMENTATIONS = [
     name: "DopeMap w/hash-it",
     instance: () => new DopeMap<string>(null, { hashFunction: hashIt }),
   },
+  { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
 ];
 
 const resultsTable: string[] = [];
@@ -148,33 +152,35 @@ SIZES.forEach((size) => {
         resultsTable.push(
           `#### ${title.toLocaleUpperCase()} keys / ${size.toLocaleString()} entries`
         );
+        resultsTable.push(`| Map | ${METHODS.join(" | ")} |`);
         resultsTable.push(
-          `| Operation | ${MAP_IMPLEMENTATIONS.map(
-            ({ name }) => `${name}`
-          ).join(" | ")} |`
-        );
-        resultsTable.push(
-          `|-----------|${MAP_IMPLEMENTATIONS.map(() => "-----------").join(
-            "|"
-          )}|`
+          `|-----------|${METHODS.map(() => "-----------").join("|")}|`
         );
 
-        ["Set", "Get", "Has", "Delete"].forEach((operation) => {
-          const row = [`| ${operation}`];
-          MAP_IMPLEMENTATIONS.forEach(({ name }) => {
-            const current = operationResults[operation][name];
-            const baseline = baselineResults[operation] || 0;
-            const difference =
-              baseline && operationResults[operation][name]
-                ? operationResults[operation][name] - baseline
-                : 0;
-            const diffString = ` (${difference > 0 ? "+" : "-"}${formatMs(
+        MAP_IMPLEMENTATIONS.forEach(({ name }) => {
+          const row = [`| **${name}**`];
+
+          METHODS.forEach((method) => {
+            const current = operationResults[method][name];
+            const baseline = baselineResults[method] || 0;
+
+            const difference = roundMs(
+              baseline && operationResults[method][name]
+                ? operationResults[method][name] - baseline
+                : 0
+            );
+            const diffString = ` (${difference > 0 ? "+" : ""}${formatMs(
               difference
             )})`;
-            row.push(`${formatMs(current)}${name === "Map" ? "" : diffString}`);
+            const showDiffString = name !== "Map" && difference !== 0;
+
+            row.push(
+              `${formatMs(roundMs(current))}${showDiffString ? diffString : ""}`
+            );
           });
-          row.push("|");
-          resultsTable.push(row.join(" | "));
+
+          const finalRow = row.join(" | ") + ` |`;
+          resultsTable.push(finalRow);
         });
 
         resultsTable.push("");

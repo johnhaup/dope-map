@@ -59,27 +59,6 @@ import hashIt from "hash-it";
 const dopeMap = new DopeMap(null, { hashFunction: hashIt });
 ```
 
-## API Reference
-
-| **Method/Property** | **Type**                                                  | **Description**                                           | **Parameters**                                                                | **Returns**                         |
-| ------------------- | --------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------- | ------------ |
-| **constructor**     | `(entries?: Iterable<[DopeKey, V]>                        | null, config?: DopeMapConfig)`                            | Initializes a new `DopeMap` instance with optional entries and configuration. | `entries` \*(Iterable<[DopeKey, V]> | null)_: Initial entries, `config` _(DopeMapConfig)\*: Optional configuration. | `DopeMap<V>` |
-| **set**             | `(k: DopeKey, v: V)`                                      | Adds or updates an entry in the map.                      | `k` _(DopeKey)_: Key, `v` _(V)_: Value.                                       | `Map<HashedKey, MapEntry<V>>`       |
-| **get**             | `(k: DopeKey)`                                            | Retrieves a value by its key.                             | `k` _(DopeKey)_: Key to look up.                                              | `V                                  | undefined`                                                                    |
-| **has**             | `(k: DopeKey)`                                            | Checks if a key exists in the map.                        | `k` _(DopeKey)_: Key to check.                                                | `boolean`                           |
-| **delete**          | `(k: DopeKey)`                                            | Removes an entry from the map.                            | `k` _(DopeKey)_: Key to remove.                                               | `boolean`                           |
-| **clear**           | `()`                                                      | Clears all entries from the map.                          | -                                                                             | `void`                              |
-| **size**            | `number`                                                  | Number of entries in the map.                             | -                                                                             | `number`                            |
-| **getTotalSize**    | `()`                                                      | Returns the total size, including internal hash mappings. | -                                                                             | `number`                            |
-| **getMap**          | `()`                                                      | Returns internal entries as an object.                    | -                                                                             | `Record<string, MapEntry<V>>`       |
-| **entries**         | `(asArray: true)`                                         | Returns entries as an array.                              | `asArray` _(boolean)_: Return as array.                                       | `[DopeKey, V][]`                    |
-| **entries**         | `(asArray?: false)`                                       | Returns entries as an iterator.                           | `asArray` _(boolean)_: Return as iterator.                                    | `IterableIterator<[DopeKey, V]>`    |
-| **forEach**         | `(callback: (value: V, key: DopeKey, map: this) => void)` | Executes a callback for each entry.                       | `callback` _(function)_: Callback function.                                   | `void`                              |
-| **keys**            | `(asArray: true)`                                         | Returns keys as an array.                                 | `asArray` _(boolean)_: Return as array.                                       | `DopeKey[]`                         |
-| **keys**            | `(asArray?: false)`                                       | Returns keys as an iterator.                              | `asArray` _(boolean)_: Return as iterator.                                    | `IterableIterator<DopeKey>`         |
-| **values**          | `(asArray: true)`                                         | Returns values as an array.                               | `asArray` _(boolean)_: Return as array.                                       | `V[]`                               |
-| **values**          | `(asArray?: false)`                                       | Returns values as an iterator.                            | `asArray` _(boolean)_: Return as iterator.                                    | `IterableIterator<V>`               |
-
 ## Benchmarks
 
 _Each Dope/Map grows to the entry size. Averages of method time are below. All times are in milliseconds._

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import DopeMap from "../src/dopeMap";
+import DopeMapV1 from "../src/v1";
 import {
   nirvanaKey,
   nirvanaValue,
@@ -7,7 +7,7 @@ import {
   weezerValue,
 } from "../__fixtures__";
 
-describe.each([["DopeMap", DopeMap]])("%s", (name, DopeMap) => {
+describe.each([["DopeMap v1", DopeMapV1]])("%s", (name, DopeMap) => {
   type TestValue = { [key: number]: string };
   let dopeMap: InstanceType<typeof DopeMap<TestValue>>;
 
@@ -26,22 +26,16 @@ describe.each([["DopeMap", DopeMap]])("%s", (name, DopeMap) => {
   });
 
   it("uses custom hash function", () => {
-    const customHashMap = new DopeMap(null, { hashFunction: () => "123" });
+    const customHashMap = new DopeMap({ hashFunction: () => "123" });
     customHashMap.set({ blarf: true }, "hey there");
     expect(customHashMap.has("123")).toBe(true);
     expect(customHashMap.get("123")).toBe("hey there");
   });
 
-  it("adds initial entries", () => {
-    const customHashMap = new DopeMap<any>([[1, 2]]);
-    expect(customHashMap.has(1)).toBe(true);
-    expect(customHashMap.get(1)).toBe(2);
-  });
-
   it("throws error when custom hash function is not a function", () => {
     expect(() => {
       // @ts-expect-error hashFunction is wrong type
-      new DopeMap(null, { hashFunction: "123" });
+      new DopeMap({ hashFunction: "123" });
     }).toThrow("[DOPE] Provided hashFunction must be a function.  Not dope!");
   });
 

@@ -5,7 +5,6 @@ import {
   HashFunction,
   DopeMapConfig,
   DopeKey,
-  HashConfig,
 } from "./types.js";
 
 export default class DopeMap<V> {
@@ -13,12 +12,17 @@ export default class DopeMap<V> {
   private hashKeyMap: Map<DopeKey, HashedKey>;
 
   private hashFunction: HashFunction = dopeHash;
-  private hashConfig: HashConfig | undefined = undefined;
 
-  constructor(config: DopeMapConfig = {}) {
+  constructor(entries?: Iterable<[DopeKey, V]> | null, config?: DopeMapConfig) {
     this.handleConfig(config);
     this.dopeMap = new Map();
     this.hashKeyMap = new Map();
+
+    if (entries) {
+      for (const [key, value] of entries) {
+        this.set(key, value);
+      }
+    }
   }
 
   private handleConfig(config?: DopeMapConfig) {
@@ -30,23 +34,21 @@ export default class DopeMap<V> {
       }
 
       this.hashFunction = config.hashFunction;
-    } else {
-      this.hashConfig = config?.hashConfig;
     }
   }
 
   private getHashedKey(key: DopeKey) {
     if (this.hashKeyMap.has(key)) {
-      return this.hashKeyMap.get(key) as string;
+      return this.hashKeyMap.get(key) as HashedKey;
     }
 
-    return this.hashFunction(key, this.hashConfig);
+    return this.hashFunction(key);
   }
 
-  set(k: DopeKey, v: V): void {
+  set(k: DopeKey, v: V) {
     const hashedKey = this.getHashedKey(k);
-    this.dopeMap.set(hashedKey, { k, v });
     this.hashKeyMap.set(k, hashedKey);
+    return this.dopeMap.set(hashedKey, { k, v });
   }
 
   get(k: DopeKey) {

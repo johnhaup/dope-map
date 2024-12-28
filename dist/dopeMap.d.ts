@@ -1,14 +1,12 @@
-import { MapEntry, DopeMapConfig, DopeKey } from "./types.js";
+import { HashedKey, MapEntry, DopeMapConfig, DopeKey } from "./types.js";
 export default class DopeMap<V> {
     private dopeMap;
-    private primitiveKeys;
+    private hashKeyMap;
     private hashFunction;
-    private hashConfig;
-    constructor(config?: DopeMapConfig);
+    constructor(entries?: Iterable<[DopeKey, V]> | null, config?: DopeMapConfig);
     private handleConfig;
-    private isHashedKey;
     private getHashedKey;
-    set(k: DopeKey, v: V): void;
+    set(k: DopeKey, v: V): Map<HashedKey, MapEntry<V>>;
     get(k: DopeKey): V | undefined;
     has(k: DopeKey): boolean;
     delete(k: DopeKey): boolean;
@@ -17,7 +15,11 @@ export default class DopeMap<V> {
      */
     get size(): number;
     /**
-     * Returns the full Dope Map as an object
+     * Returns size of dope map plus its internal hash map
+     */
+    getTotalSize(): number;
+    /**
+     * Returns an object in a hashedKey: value shape.
      */
     getMap(): {
         [k: string]: MapEntry<V>;

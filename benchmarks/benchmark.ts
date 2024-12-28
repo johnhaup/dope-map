@@ -1,6 +1,7 @@
 import Benchmark, { Target } from "benchmark";
 import DopeMapV1 from "../src/v1";
 import DopeMap from "../src/dopeMap";
+import hashIt from "hash-it";
 
 import fs from "fs";
 import path from "path";
@@ -8,7 +9,8 @@ import { fileURLToPath } from "url";
 
 const SIZES = [100, 1_000, 10_000, 100_000];
 
-const formatMs = (ms: number) => (ms > 0 ? ms.toFixed(1) : ms.toFixed(3));
+const formatMs = (ms: number) =>
+  ms < 1 && ms > -1 ? ms.toFixed(3) : ms.toFixed(1);
 
 function generateMixedKeys(size: number): object[] {
   const keys: object[] = [];
@@ -58,8 +60,12 @@ const MAP_IMPLEMENTATIONS = [
   { name: "Map", instance: () => new Map<object, string>() },
   { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
   {
-    name: "DopeMap V2",
+    name: "DopeMap",
     instance: () => new DopeMap<string>(),
+  },
+  {
+    name: "DopeMap w/hash-it",
+    instance: () => new DopeMap<string>(null, { hashFunction: hashIt }),
   },
 ];
 
@@ -144,7 +150,7 @@ SIZES.forEach((size) => {
         );
         resultsTable.push(
           `| Operation | ${MAP_IMPLEMENTATIONS.map(
-            ({ name }) => `${name} (ms)`
+            ({ name }) => `${name}`
           ).join(" | ")} |`
         );
         resultsTable.push(

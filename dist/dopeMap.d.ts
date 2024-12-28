@@ -5,6 +5,7 @@ export default class DopeMap<V> {
     private hashFunction;
     constructor(entries?: Iterable<[DopeKey, V]> | null, config?: DopeMapConfig);
     private handleConfig;
+    private isPrimitiveKey;
     private getHashedKey;
     set(k: DopeKey, v: V): Map<HashedKey, MapEntry<V>>;
     get(k: DopeKey): V | undefined;

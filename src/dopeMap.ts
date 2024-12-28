@@ -37,12 +37,22 @@ export default class DopeMap<V> {
     }
   }
 
-  private getHashedKey(key: DopeKey) {
-    if (this.hashKeyMap.has(key)) {
-      return this.hashKeyMap.get(key) as HashedKey;
+  private isPrimitiveKey(key: DopeKey): key is HashedKey {
+    return typeof key === "string" || typeof key === "number";
+  }
+
+  private getHashedKey(key: DopeKey): HashedKey {
+    if (this.isPrimitiveKey(key)) {
+      return key;
     }
 
-    return this.hashFunction(key);
+    if (this.hashKeyMap.has(key)) {
+      return this.hashKeyMap.get(key)!;
+    }
+
+    const hashedKey = this.hashFunction(key);
+    this.hashKeyMap.set(key, hashedKey);
+    return hashedKey;
   }
 
   set(k: DopeKey, v: V) {

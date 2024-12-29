@@ -1,4 +1,8 @@
-import DopeMap from "../src/index";
+import { beforeEach, describe, expect, it } from "vitest";
+import DopeMap from "../src/dopeMap";
+import Dist from "../dist/index.cjs.js";
+const DopeDist = Dist.default as unknown as typeof DopeMap;
+
 import {
   nirvanaKey,
   nirvanaValue,
@@ -6,12 +10,15 @@ import {
   weezerValue,
 } from "../__fixtures__";
 
-describe("DopeMap", () => {
+describe.each([
+  ["DopeMap", DopeMap],
+  ["Dist CJS", DopeDist],
+])("%s", (name, DopeMap) => {
   type TestValue = { [key: number]: string };
-  let dopeMap: DopeMap<TestValue>;
+  let dopeMap: InstanceType<typeof DopeMap<unknown, TestValue>>;
 
   beforeEach(() => {
-    dopeMap = new DopeMap<TestValue>();
+    dopeMap = new DopeMap<unknown, TestValue>();
     dopeMap.set(weezerKey, weezerValue);
     dopeMap.set(nirvanaKey, nirvanaValue);
   });
@@ -25,16 +32,22 @@ describe("DopeMap", () => {
   });
 
   it("uses custom hash function", () => {
-    const customHashMap = new DopeMap({ hashFunction: () => "123" });
+    const customHashMap = new DopeMap(null, { hashFunction: () => "123" });
     customHashMap.set({ blarf: true }, "hey there");
     expect(customHashMap.has("123")).toBe(true);
     expect(customHashMap.get("123")).toBe("hey there");
   });
 
+  it("adds initial entries", () => {
+    const customHashMap = new DopeMap<number>([[1, 2]]);
+    expect(customHashMap.has(1)).toBe(true);
+    expect(customHashMap.get(1)).toBe(2);
+  });
+
   it("throws error when custom hash function is not a function", () => {
     expect(() => {
       // @ts-expect-error hashFunction is wrong type
-      new DopeMap({ hashFunction: "123" });
+      new DopeMap(null, { hashFunction: "123" });
     }).toThrow("[DOPE] Provided hashFunction must be a function.  Not dope!");
   });
 
@@ -66,17 +79,6 @@ describe("DopeMap", () => {
     expect(dopeMap.has(weezerKey)).toBe(false);
   });
 
-  it("returns object of map", () => {
-    const map = dopeMap.getMap();
-    expect(typeof map).toBe("object");
-    expect(Object.keys(map).every((k) => typeof k === "string")).toBe(true);
-    expect(
-      Object.values(map).every(
-        (v) => v.v === nirvanaValue || v.v === weezerValue
-      )
-    );
-  });
-
   it("iterates over all entries using the 'forEach' method", () => {
     let index = 0;
     dopeMap.forEach((v, k, m) => {
@@ -88,5 +90,84 @@ describe("DopeMap", () => {
       expect(m.get(k)).toBe(v);
       index++;
     });
+  });
+
+  it("returns iterator for entries", () => {
+    const entries = dopeMap.entries();
+
+    expect(typeof entries.next).toBe("function");
+
+    const firstItem = entries.next();
+    expect(firstItem).toHaveProperty("value");
+    expect(firstItem).toHaveProperty("done");
+    expect(Array.isArray(firstItem.value)).toBe(true);
+    expect(firstItem.value.length).toBe(2);
+    expect(firstItem.value[0]).toBe(weezerKey);
+    expect(firstItem.value[1]).toBe(weezerValue);
+
+    const secondItem = entries.next();
+    expect(secondItem.value[0]).toBe(nirvanaKey);
+    expect(secondItem.value[1]).toBe(nirvanaValue);
+  });
+
+  it("returns array for getEntries", () => {
+    const entries = dopeMap.getEntries();
+
+    expect(Array.isArray(entries)).toBe(true);
+    expect(entries.length).toBe(2);
+    expect(entries).toEqual([
+      [weezerKey, weezerValue],
+      [nirvanaKey, nirvanaValue],
+    ]);
+  });
+
+  it("returns iterator for keys", () => {
+    const keys = dopeMap.keys();
+
+    expect(typeof keys.next).toBe("function");
+
+    const firstItem = keys.next();
+    expect(firstItem).toHaveProperty("value");
+    expect(firstItem).toHaveProperty("done");
+    expect(firstItem.value).toBe(weezerKey);
+
+    const secondItem = keys.next();
+    expect(secondItem.value).toBe(nirvanaKey);
+  });
+
+  it("returns array for getKeys", () => {
+    const keys = dopeMap.getKeys();
+
+    expect(Array.isArray(keys)).toBe(true);
+    expect(keys.length).toBe(2);
+    expect(keys).toEqual([weezerKey, nirvanaKey]);
+  });
+
+  it("returns iterator for values", () => {
+    const values = dopeMap.values();
+
+    expect(typeof values.next).toBe("function");
+
+    const firstItem = values.next();
+    expect(firstItem).toHaveProperty("value");
+    expect(firstItem).toHaveProperty("done");
+    expect(firstItem.value).toBe(weezerValue);
+
+    let count = 0;
+    for (const entry of values) {
+      expect(entry).toBe(nirvanaValue);
+      count++;
+    }
+
+    expect(count).toBe(1);
+  });
+
+  it("returns array for getValues", () => {
+    const values = dopeMap.getValues();
+
+    expect(Array.isArray(values)).toBe(true);
+    expect(values.length).toBe(2);
+    expect(values[0]).toBe(weezerValue);
+    expect(values[1]).toBe(nirvanaValue);
   });
 });

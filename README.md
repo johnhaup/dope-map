@@ -8,19 +8,17 @@
 
 A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that adds the ability to uses keys of equal but not referential value. This comes with a performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is large take that into consideration.
 
-Defaults to using [hash-it](https://github.com/planttheidea/hash-it) for its key hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
+Ships with a hardcoded (dep-free) implementation of [fast-json-stable-stringify](https://github.com/epoberezkin/fast-json-stable-stringify) and [xxhashjs](https://github.com/pierrec/js-xxhash) as its hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
 #### RoadMap 🚧
 
-1. Enhance interactive demo site (check out the wip <a href="https://johnhaup.github.io/dope-map/" target="_blank">here</a>)
-2. Add `config` option to make retaining original keys optional
-3. Add `config` options to speed up hash time if consumer has some awareness of key shape (ex: object where only top level of keys matters)
-4. Obviously speed up hash time dang get off my case
+1. Enhance interactive demo site (check out the wip [here](https://johnhaup.github.io/dope-map))
+2. Native hash for node
 
 ## Installation
 
 ```bash
-yarn add @johnhaup/dope-map hash-it
+yarn add @johnhaup/dope-map
 ```
 
 ## Usage
@@ -53,95 +51,113 @@ console.log(map.get(key2)); // Output: "numbers"
 console.log(map.get({ to: "fu", foo: "bar" })); // Output: undefined
 ```
 
-```javascript
-// Custom hash function
-import DopeMap from "@johnhaup/dope-map";
-import blazeHasher from "blazing-fast-hash-package";
+## API Reference
 
-const dopeMap = new DopeMap({ hashFunction: blazeHasher });
+_In addition to standard Map methods_
+
+#### Config
+
+DopeMaps constructor accepts a second `config` argument.
+
+```javascript
+import DopeMap from "@johnhaup/dope-map";
+import hashIt from "hash-it";
+
+const dopeMap = new DopeMap(null, { hashFunction: hashIt });
 ```
 
-### API Reference
+| Property       | Type                                 | Description                                     |
+| -------------- | ------------------------------------ | ----------------------------------------------- |
+| `hashFunction` | `(key: unknown) => string \| number` | Custom hashing function for non-primitive keys. |
 
-The following table summarizes the **methods** and **properties** of `DopeMap`, along with their functionality. If a method behaves identically to JavaScript's native `Map`, it's marked **✅**. If it extends `Map` functionality, it's marked **✅ + Extra**.
+#### Methods
 
-| **Method/Property**                                                       | **Type**      | **Description**                                                          | **Same as Map?**                 |
-| ------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------ | -------------------------------- |
-| **`constructor(config?: DopeMapConfig)`**                                 | `constructor` | Initializes a new `DopeMap`. Optionally accepts a custom `hashFunction`. | ✅ + Extra (`hashFunction`)      |
-| **`set(key: K, value: V): void`**                                         | `method`      | Sets a value for the given key.                                          | ✅ Same as `Map.set()`           |
-| **`get(key: K): V \| undefined`**                                         | `method`      | Retrieves a value by its key.                                            | ✅ Same as `Map.get()`           |
-| **`has(key: K): boolean`**                                                | `method`      | Checks if a key exists in the map.                                       | ✅ Same as `Map.has()`           |
-| **`delete(key: K): boolean`**                                             | `method`      | Deletes a key-value pair from the map.                                   | ✅ Same as `Map.delete()`        |
-| **`clear(): void`**                                                       | `method`      | Removes all key-value pairs from the map.                                | ✅ Same as `Map.clear()`         |
-| **`get size(): number`**                                                  | `property`    | Returns the number of entries in the map.                                | ✅ Same as `Map.size`            |
-| **`getMap(): Record<K, V>`**                                              | `method`      | Returns all entries as a plain object with hashed keys.                  | ✅ + Extra (Plain Object Output) |
-| **`entries(asArray: true): [K, V][]`**                                    | `method`      | Returns all entries as an array of `[key, value]` pairs.                 | ✅ + Extra (Array Support)       |
-| **`entries(asArray?: false): IterableIterator<[K, V]>`**                  | `method`      | Returns an iterator of `[key, value]` pairs.                             | ✅ Same as `Map.entries()`       |
-| **`forEach(callback: (value: V, key: K, map: Map<K, V>) => void): void`** | `method`      | Executes a callback for each key-value pair.                             | ✅ Same as `Map.forEach()`       |
-| **`keys(asArray: true): K[]`**                                            | `method`      | Returns an array of keys.                                                | ✅ + Extra (Array Support)       |
-| **`keys(asArray?: false): IterableIterator<K>`**                          | `method`      | Returns an iterator of keys.                                             | ✅ Same as `Map.keys()`          |
-| **`values(asArray: true): V[]`**                                          | `method`      | Returns an array of values.                                              | ✅ + Extra (Array Support)       |
-| **`values(asArray?: false): IterableIterator<V>`**                        | `method`      | Returns an iterator of values.                                           | ✅ Same as `Map.values()`        |
+| Method       | Return Value                                     |
+| ------------ | ------------------------------------------------ |
+| `getEntries` | Array of `[key, value]` tuples in order of entry |
+| `getKeys`    | Array of keys in order of entry                  |
+| `getValues`  | Array of values in order of entry                |
 
 ## Benchmarks
 
-_Each Dope/Map grows to the entry size. Averages of method time are below._
+_Each Dope/Map grows to the iteration size. Averages of method time are below. All times are in milliseconds._
 
 <!-- BENCHMARK RESULTS START -->
-#### objects keys / 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.001      | 0.072     | 0.071          |
-| Get       | 0.000      | 0.072     | 0.072          |
-| Delete    | 0.000      | 0.071     | 0.071          |
 
-#### primitives keys / 100 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.000      | 0.000     | 0.000          |
-| Get       | 0.000      | 0.000     | 0.000          |
-| Delete    | 0.000      | 0.000     | -0.000          |
+### OBJECTS keys
 
-#### objects keys / 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.010      | 0.739     | 0.729          |
-| Get       | 0.001      | 0.733     | 0.732          |
-| Delete    | 0.005      | 0.716     | 0.710          |
+#### 100 iterations
 
-#### primitives keys / 1,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.002      | 0.002     | -0.000          |
-| Get       | 0.001      | 0.002     | 0.002          |
-| Delete    | 0.002      | 0.002     | -0.000          |
+| Map                   | Set            | Get            | Has            | Delete         |
+| --------------------- | -------------- | -------------- | -------------- | -------------- |
+| **Map**               | 0.001          | 0.0            | 0.0            | 0.0            |
+| **DopeMap**           | 0.004 (+0.003) | 0.002 (+0.002) | 0.001 (+0.001) | 0.002 (+0.001) |
+| **DopeMap w/hash-it** | 0.004 (+0.003) | 0.002 (+0.002) | 0.001 (+0.001) | 0.002 (+0.002) |
+| **DopeMap V1**        | 0.071 (+0.070) | 0.070 (+0.070) | 0.067 (+0.067) | 0.068 (+0.068) |
 
-#### objects keys / 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.162      | 7.823     | 7.661          |
-| Get       | 0.008      | 7.749     | 7.741          |
-| Delete    | 0.052      | 7.302     | 7.250          |
+#### 1,000 iterations
 
-#### primitives keys / 10,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.023      | 0.022     | -0.000          |
-| Get       | 0.005      | 0.023     | 0.017          |
-| Delete    | 0.022      | 0.022     | -0.000          |
+| Map                   | Set            | Get            | Has            | Delete         |
+| --------------------- | -------------- | -------------- | -------------- | -------------- |
+| **Map**               | 0.011          | 0.0            | 0.001          | 0.005          |
+| **DopeMap**           | 0.050 (+0.039) | 0.028 (+0.027) | 0.016 (+0.015) | 0.019 (+0.015) |
+| **DopeMap w/hash-it** | 0.053 (+0.042) | 0.033 (+0.033) | 0.017 (+0.016) | 0.024 (+0.019) |
+| **DopeMap V1**        | 0.728 (+0.717) | 0.712 (+0.711) | 0.703 (+0.703) | 0.714 (+0.709) |
 
-#### objects keys / 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 1.636      | 90.981     | 89.345          |
-| Get       | 0.314      | 87.615     | 87.301          |
-| Delete    | 0.556      | 77.312     | 76.757          |
+#### 10,000 iterations
 
-#### primitives keys / 100,000 entries
-| Operation |  Map (ms) | DopeMap (ms) | Difference (ms) |
-|-----------|-----------------|--------------|-----------------|
-| Set       | 0.224      | 0.225     | 0.002          |
-| Get       | 0.058      | 0.226     | 0.169          |
-| Delete    | 0.225      | 0.223     | -0.002          |
+| Map                   | Set            | Get            | Has            | Delete         |
+| --------------------- | -------------- | -------------- | -------------- | -------------- |
+| **Map**               | 0.173          | 0.022          | 0.033          | 0.053          |
+| **DopeMap**           | 0.658 (+0.485) | 0.465 (+0.443) | 0.192 (+0.158) | 0.241 (+0.189) |
+| **DopeMap w/hash-it** | 0.640 (+0.467) | 0.487 (+0.465) | 0.192 (+0.158) | 0.286 (+0.233) |
+| **DopeMap V1**        | 7.6 (+7.4)     | 7.4 (+7.4)     | 6.9 (+6.9)     | 7.0 (+7.0)     |
+
+#### 100,000 iterations
+
+| Map                   | Set          | Get          | Has          | Delete       |
+| --------------------- | ------------ | ------------ | ------------ | ------------ |
+| **Map**               | 1.7          | 1.5          | 1.4          | 0.587        |
+| **DopeMap**           | 7.0 (+5.3)   | 5.2 (+3.7)   | 4.7 (+3.3)   | 2.4 (+1.8)   |
+| **DopeMap w/hash-it** | 8.0 (+6.3)   | 6.9 (+5.3)   | 5.3 (+3.9)   | 2.7 (+2.1)   |
+| **DopeMap V1**        | 89.6 (+87.9) | 84.2 (+82.7) | 83.1 (+81.7) | 73.4 (+72.8) |
+
+### PRIMITIVES keys
+
+#### 100 iterations
+
+| Map                   | Set            | Get            | Has            | Delete |
+| --------------------- | -------------- | -------------- | -------------- | ------ |
+| **Map**               | 0.001          | 0.0            | 0.0            | 0.0    |
+| **DopeMap**           | 0.002 (+0.002) | 0.001 (+0.001) | 0.0            | 0.001  |
+| **DopeMap w/hash-it** | 0.002 (+0.002) | 0.001 (+0.001) | 0.0            | 0.001  |
+| **DopeMap V1**        | 0.002 (+0.001) | 0.001 (+0.001) | 0.001 (+0.001) | 0.001  |
+
+#### 1,000 iterations
+
+| Map                   | Set            | Get            | Has            | Delete         |
+| --------------------- | -------------- | -------------- | -------------- | -------------- |
+| **Map**               | 0.012          | 0.001          | 0.001          | 0.005          |
+| **DopeMap**           | 0.032 (+0.021) | 0.013 (+0.012) | 0.003 (+0.003) | 0.006 (+0.001) |
+| **DopeMap w/hash-it** | 0.033 (+0.021) | 0.013 (+0.012) | 0.003 (+0.003) | 0.006 (+0.001) |
+| **DopeMap V1**        | 0.030 (+0.018) | 0.020 (+0.019) | 0.009 (+0.008) | 0.011 (+0.006) |
+
+#### 10,000 iterations
+
+| Map                   | Set            | Get            | Has            | Delete         |
+| --------------------- | -------------- | -------------- | -------------- | -------------- |
+| **Map**               | 0.204          | 0.022          | 0.022          | 0.051          |
+| **DopeMap**           | 0.378 (+0.174) | 0.195 (+0.173) | 0.028 (+0.006) | 0.059 (+0.008) |
+| **DopeMap w/hash-it** | 0.378 (+0.174) | 0.194 (+0.173) | 0.029 (+0.007) | 0.061 (+0.010) |
+| **DopeMap V1**        | 0.334 (+0.130) | 0.251 (+0.229) | 0.071 (+0.049) | 0.102 (+0.051) |
+
+#### 100,000 iterations
+
+| Map                   | Set        | Get        | Has          | Delete         |
+| --------------------- | ---------- | ---------- | ------------ | -------------- |
+| **Map**               | 2.7        | 1.0        | 1.0          | 0.560          |
+| **DopeMap**           | 5.4 (+2.7) | 3.1 (+2.0) | 2.9 (+1.9)   | 0.609 (+0.049) |
+| **DopeMap w/hash-it** | 5.7 (+2.9) | 3.1 (+2.1) | 3.0 (+2.0)   | 0.612 (+0.052) |
+| **DopeMap V1**        | 4.5 (+1.8) | 3.4 (+2.3) | 1.8 (+0.777) | 1.1 (+0.504)   |
 
 <!-- BENCHMARK RESULTS END -->

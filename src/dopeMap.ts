@@ -7,13 +7,13 @@ import {
   DopeKey,
 } from "./types.js";
 
-export default class DopeMap<V> {
-  private dopeMap: Map<HashedKey, MapEntry<V>>;
-  private hashKeyMap: Map<DopeKey, HashedKey>;
+export default class DopeMap<K extends DopeKey, V> {
+  private dopeMap: Map<HashedKey, MapEntry<K, V>>;
+  private hashKeyMap: Map<K, HashedKey>;
 
   private hashFunction: HashFunction = dopeHash;
 
-  constructor(entries?: Iterable<[DopeKey, V]> | null, config?: DopeMapConfig) {
+  constructor(entries?: Iterable<[K, V]> | null, config?: DopeMapConfig) {
     this.handleConfig(config);
     this.dopeMap = new Map();
     this.hashKeyMap = new Map();
@@ -41,7 +41,7 @@ export default class DopeMap<V> {
     return typeof key === "string" || typeof key === "number";
   }
 
-  private getHashedKey(key: DopeKey): HashedKey {
+  private getHashedKey(key: K): HashedKey {
     if (this.isPrimitiveKey(key)) {
       return key;
     }
@@ -55,47 +55,30 @@ export default class DopeMap<V> {
     return hashedKey;
   }
 
-  set(k: DopeKey, v: V) {
+  set(k: K, v: V) {
     const hashedKey = this.getHashedKey(k);
     this.hashKeyMap.set(k, hashedKey);
     return this.dopeMap.set(hashedKey, { k, v });
   }
 
-  get(k: DopeKey) {
+  get(k: K) {
     const hashedKey = this.getHashedKey(k);
     const entry = this.dopeMap.get(hashedKey);
     return entry?.v;
   }
 
-  has(k: DopeKey) {
+  has(k: K) {
     const hashedKey = this.getHashedKey(k);
     return this.dopeMap.has(hashedKey);
   }
 
-  delete(k: DopeKey) {
+  delete(k: K) {
     const hashedKey = this.getHashedKey(k);
     return this.dopeMap.delete(hashedKey);
   }
 
-  /**
-   * Returns Dope Map's current size
-   */
   get size() {
     return this.dopeMap.size;
-  }
-
-  /**
-   * Returns size of dope map plus its internal hash map
-   */
-  getTotalSize() {
-    return this.dopeMap.size + this.hashKeyMap.size;
-  }
-
-  /**
-   * Returns an object in a hashedKey: value shape.
-   */
-  getMap() {
-    return Object.fromEntries(this.dopeMap.entries());
   }
 
   clear() {
@@ -103,45 +86,51 @@ export default class DopeMap<V> {
     return this.dopeMap.clear();
   }
 
-  entries(asArray: true): [DopeKey, V][];
-  entries(asArray?: false): IterableIterator<[DopeKey, V]>;
-  entries(asArray?: boolean): [DopeKey, V][] | IterableIterator<[DopeKey, V]> {
-    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+  entries(): IterableIterator<[K, V]> {
+    const iterator = (function* (map: Map<HashedKey, MapEntry<K, V>>) {
       for (const { k, v } of map.values()) {
-        yield [k, v] as [DopeKey, V];
+        yield [k, v] as [K, V];
       }
     })(this.dopeMap);
 
-    return asArray ? Array.from(iterator) : iterator;
+    return iterator;
   }
 
-  forEach(callback: (value: V, key: DopeKey, map: this) => void): void {
+  getEntries() {
+    return Array.from(this.entries());
+  }
+
+  forEach(callback: (value: V, key: K, map: this) => void): void {
     for (const { k, v } of this.dopeMap.values()) {
       callback(v, k, this);
     }
   }
 
-  keys(asArray: true): DopeKey[];
-  keys(asArray?: false): IterableIterator<DopeKey>;
-  keys(asArray?: boolean): DopeKey[] | IterableIterator<DopeKey> {
-    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+  keys() {
+    const iterator = (function* (map: Map<HashedKey, MapEntry<K, V>>) {
       for (const { k } of map.values()) {
         yield k;
       }
     })(this.dopeMap);
 
-    return asArray ? Array.from(iterator) : iterator;
+    return iterator;
   }
 
-  values(asArray: true): V[];
-  values(asArray?: false): IterableIterator<V>;
-  values(asArray?: boolean): V[] | IterableIterator<V> {
-    const iterator = (function* (map: Map<HashedKey, MapEntry<V>>) {
+  getKeys() {
+    return Array.from(this.keys());
+  }
+
+  values() {
+    const iterator = (function* (map: Map<HashedKey, MapEntry<K, V>>) {
       for (const { v } of map.values()) {
         yield v;
       }
     })(this.dopeMap);
 
-    return asArray ? Array.from(iterator) : iterator;
+    return iterator;
+  }
+
+  getValues() {
+    return Array.from(this.values());
   }
 }

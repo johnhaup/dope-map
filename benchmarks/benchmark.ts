@@ -1,82 +1,15 @@
 import Benchmark, { Target } from "benchmark";
-import DopeMapV1 from "../src/v1";
-import DopeMap from "../src/dopeMap";
-import hashIt from "hash-it";
-
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
-const SIZES = [100, 1_000, 10_000, 100_000];
-
-const formatMs = (ms: number) => {
-  return ms < 1 && ms > -1 && ms !== 0 ? ms.toFixed(3) : ms.toFixed(1);
-};
-const roundMs = (ms: number) => Math.round(ms * 1000) / 1000;
-
-function generateMixedKeys(size: number): object[] {
-  const keys: object[] = [];
-  const duplicates = Math.floor(size / 2);
-  const unique = size - duplicates;
-
-  const baseKey = {
-    id: 1,
-    name: "Duplicate",
-    nested: { level: 1, value: "Value" },
-  };
-
-  for (let i = 0; i < duplicates / 2; i++) {
-    const duplicateKey = { ...baseKey, id: i };
-    keys.push(duplicateKey, duplicateKey);
-  }
-
-  for (let i = 0; i < unique; i++) {
-    keys.push({
-      id: i + duplicates,
-      name: `Unique Object ${i}`,
-      nested: { level: 1, value: `Value ${i}` },
-    });
-  }
-
-  return keys;
-}
-
-function generatePrimitiveKeys(size: number): (string | number)[] {
-  return Array.from({ length: size }, (_, s) =>
-    s % 2 === 0 ? s : `${s}_${s}:wavves`
-  );
-}
-
-const METHODS = ["Set", "Get", "Has", "Delete"];
-
-const KEY_CONFIGS = [
-  {
-    title: "objects",
-    generateKeys: generateMixedKeys,
-  },
-  {
-    title: "primitives",
-    generateKeys: generatePrimitiveKeys,
-  },
-];
-
-const MAP_IMPLEMENTATIONS = [
-  { name: "Map", instance: () => new Map<object, string>() },
-  {
-    name: "DopeMap",
-    instance: () => new DopeMap<string>(),
-  },
-  {
-    name: "DopeMap w/hash-it",
-    instance: () => new DopeMap<string>(null, { hashFunction: hashIt }),
-  },
-  { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
-];
+import { KEY_CONFIGS, MAP_IMPLEMENTATIONS, METHODS, SIZES } from "./constants";
+import { formatMs, roundMs } from "./utils";
 
 const resultsTable: string[] = [];
 
-SIZES.forEach((size) => {
-  KEY_CONFIGS.forEach(({ title, generateKeys }) => {
+KEY_CONFIGS.forEach(({ title, generateKeys }) => {
+  resultsTable.push(`### ${title.toLocaleUpperCase()} keys`);
+  SIZES.forEach((size) => {
     console.log(
       `\nRunning benchmarks for size: ${size} entries with ${title} keys`
     );
@@ -149,12 +82,12 @@ SIZES.forEach((size) => {
           }
         });
 
+        resultsTable.push(`#### ${size.toLocaleString()} iterations`);
+        resultsTable.push(`| Map | ${METHODS.join(" | ")} | Size |`);
         resultsTable.push(
-          `#### ${title.toLocaleUpperCase()} keys / ${size.toLocaleString()} entries`
-        );
-        resultsTable.push(`| Map | ${METHODS.join(" | ")} |`);
-        resultsTable.push(
-          `|-----------|${METHODS.map(() => "-----------").join("|")}|`
+          `|-----------|${METHODS.map(() => "-----------").join(
+            "|"
+          )}|-----------|`
         );
 
         MAP_IMPLEMENTATIONS.forEach(({ name }) => {
@@ -179,7 +112,7 @@ SIZES.forEach((size) => {
             );
           });
 
-          const finalRow = row.join(" | ") + ` |`;
+          const finalRow = row.join(" | ") + ` | ${size} |`;
           resultsTable.push(finalRow);
         });
 

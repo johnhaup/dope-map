@@ -74,7 +74,6 @@ function KeyValueForm() {
   const deleteKeyValue = useSetAtom(handleMapDeleteAtom);
 
   const onRunPress = useCallback(() => {
-    console.log(key, value);
     if (activeMethod === "set") {
       setKeyValue({ key: parseInput(key), value: parseInput(value) });
     } else if (activeMethod === "get") {
@@ -82,7 +81,7 @@ function KeyValueForm() {
     } else if (activeMethod === "delete") {
       deleteKeyValue(parseInput(key));
     }
-  }, [key, value, setKeyValue]);
+  }, [key, value, setKeyValue, activeMethod]);
 
   const renderMethodButton = useCallback(
     (method) => (

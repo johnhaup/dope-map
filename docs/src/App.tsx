@@ -3,6 +3,7 @@ import styled from "styled-components";
 import KeyValueForm from "./components/KeyValueForm";
 import MapVisualizer from "./components/MapVisualizer";
 import { GHIcon } from "./components/GHIcon";
+import { useAsciiText, larry3D } from "react-ascii-text";
 
 const AppWrapper = styled.div`
   max-width: 1200px;
@@ -11,32 +12,103 @@ const AppWrapper = styled.div`
   width: 100%;
   box-sizing: border-box;
   text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 16px 24px 16px 24px;
+  }
+`;
+
+const HeaderColumn = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const HeaderWrapperContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Dope = styled.img`
   border-radius: 24px;
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;
+  margin: 24px 0px;
 `;
 
-const HeaderIconsContainer = styled.div`
+const AsciiWrapper = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+
+  @media (max-width: 450px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0px;
+  }
 `;
+
+const Ascii = styled.pre`
+  font-size: 6px;
+`;
+
+function Title() {
+  const mapRef = useAsciiText({
+    animationCharacters: "▒░█",
+    animationCharacterSpacing: 1,
+    animationDelay: 2000,
+    animationDirection: "down",
+    animationInterval: 1000,
+    animationLoop: true,
+    animationSpeed: 30,
+    font: larry3D,
+    isAnimated: false,
+    text: ["Map vs"],
+  });
+  const dopeMapRef = useAsciiText({
+    animationCharacters: "▒░█",
+    animationCharacterSpacing: 1,
+    animationDelay: 2000,
+    animationDirection: "down",
+    animationInterval: 1000,
+    animationLoop: true,
+    animationSpeed: 30,
+    font: larry3D,
+    isAnimated: false,
+    text: ["DOPEMAP"],
+  });
+
+  return (
+    <AsciiWrapper>
+      <Ascii ref={mapRef}></Ascii>
+      <Ascii ref={dopeMapRef}></Ascii>
+    </AsciiWrapper>
+  );
+}
 
 function App() {
   return (
     <AppWrapper>
-      <HeaderIconsContainer>
-        <div />
-        <h1>Map vs DopeMap</h1>
-        <GHIcon />
-      </HeaderIconsContainer>
-      <Dope src={require("./dope.jpg")} />
-      <KeyValueForm />
+      <HeaderWrapperContainer>
+        <HeaderColumn>
+          <Title />
+          <Dope src={require("./dope.jpg")} />
+          <GHIcon />
+        </HeaderColumn>
+        <HeaderColumn>
+          <KeyValueForm />
+        </HeaderColumn>
+      </HeaderWrapperContainer>
       <MapVisualizer />
       <ToastContainer
         aria-label={"toast"}

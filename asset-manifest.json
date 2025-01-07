@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/dope-map/static/css/main.228ebce1.css",
-    "main.js": "/dope-map/static/js/main.fa0a1a47.js",
+    "main.js": "/dope-map/static/js/main.6e3005fd.js",
     "static/media/dope.jpg": "/dope-map/static/media/dope.1cb55149b265b59d95a5.jpg",
     "index.html": "/dope-map/index.html",
     "main.228ebce1.css.map": "/dope-map/static/css/main.228ebce1.css.map",
-    "main.fa0a1a47.js.map": "/dope-map/static/js/main.fa0a1a47.js.map"
+    "main.6e3005fd.js.map": "/dope-map/static/js/main.6e3005fd.js.map"
   },
   "entrypoints": [
     "static/css/main.228ebce1.css",
-    "static/js/main.fa0a1a47.js"
+    "static/js/main.6e3005fd.js"
   ]
 }

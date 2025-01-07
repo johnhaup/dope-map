@@ -2,6 +2,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
+import { dts } from "rollup-plugin-dts";
 
 const plugins = [
   resolve({
@@ -11,14 +12,15 @@ const plugins = [
   commonjs(),
   typescript({
     tsconfig: "./tsconfig.json",
-    emitDeclarationOnly: false,
+    declaration: true,
+    emitDeclarationOnly: false, // Ensure runtime + types are emitted
     rootDir: "./src",
+    outDir: "./dist",
   }),
-  terser(),
 ];
 
+// 👉 **ESM Build (Minified)**
 export default [
-  // ESM Build
   {
     input: "src/index.ts",
     output: {
@@ -26,23 +28,19 @@ export default [
       format: "esm",
       sourcemap: true,
     },
-    plugins,
+    plugins: [...plugins, terser()],
+    external: [],
     treeshake: {
-      moduleSideEffects: false, // Ensure tree-shaking doesn't remove modules with side effects
+      moduleSideEffects: false,
     },
   },
-
-  // CommonJS Build
+  // 👉 **Type Declarations Build (Unminified)**
   {
     input: "src/index.ts",
     output: {
-      file: "dist/index.cjs.js",
-      format: "cjs",
-      sourcemap: true,
+      file: "dist/index.d.ts",
+      format: "es",
     },
-    plugins,
-    treeshake: {
-      moduleSideEffects: false, // Ensure tree-shaking doesn't remove modules with side effects
-    },
+    plugins: [dts()],
   },
 ];

@@ -24,7 +24,7 @@ yarn add @johnhaup/dope-map
 ## Usage
 
 ```javascript
-import DopeMap from "@johnhaup/dope-map";
+import { DopeMap } from "@johnhaup/dope-map";
 
 const dopeMap = new DopeMap();
 
@@ -60,7 +60,7 @@ _In addition to standard Map methods_
 DopeMaps constructor accepts a second `config` argument.
 
 ```javascript
-import DopeMap from "@johnhaup/dope-map";
+import { DopeMap } from "@johnhaup/dope-map";
 import hashIt from "hash-it";
 
 const dopeMap = new DopeMap(null, { hashFunction: hashIt });

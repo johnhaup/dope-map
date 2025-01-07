@@ -1,2 +1,2 @@
-import * as DopeMap from "./dopeMap.js";
-export default DopeMap;
+import { DopeMap } from "./dopeMap.js";
+export { DopeMap };

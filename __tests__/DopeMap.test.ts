@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import DopeMap from "../src/dopeMap";
-import Dist from "../dist/index.cjs.js";
-const DopeDist = Dist.default as unknown as typeof DopeMap;
+import { DopeMap } from "../src";
+import { DopeMap as DopeDist } from "../dist/index.esm.js";
 
 import {
   nirvanaKey,
@@ -12,13 +11,13 @@ import {
 
 describe.each([
   ["DopeMap", DopeMap],
-  ["Dist CJS", DopeDist],
-])("%s", (name, DopeMap) => {
+  ["Dist", DopeDist],
+])("%s", (name, DopeMapClass) => {
   type TestValue = { [key: number]: string };
-  let dopeMap: InstanceType<typeof DopeMap<unknown, TestValue>>;
+  let dopeMap: InstanceType<typeof DopeMapClass>;
 
   beforeEach(() => {
-    dopeMap = new DopeMap<unknown, TestValue>();
+    dopeMap = new DopeMapClass<unknown, TestValue>();
     dopeMap.set(weezerKey, weezerValue);
     dopeMap.set(nirvanaKey, nirvanaValue);
   });

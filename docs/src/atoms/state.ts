@@ -1,4 +1,4 @@
-import DopeMap from "@johnhaup/dope-map";
+import { DopeMap } from "@johnhaup/dope-map";
 import { atom } from "jotai";
 
 export const jsMapAtom = atom({ map: new Map(), updatedAt: Date.now() });

@@ -9,5 +9,5 @@ export const jsMapEntriesArrayAtom = atom((get) => {
 });
 
 export const dopeMapEntriesArrayAtom = atom((get) => {
-  return get(dopeMapAtom).map.entries(true);
+  return get(dopeMapAtom).map.getEntries();
 });

@@ -8,9 +8,9 @@
     "access": "public"
   },
   "version": "2.1.0",
-  "main": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
   "type": "module",
+  "main": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],

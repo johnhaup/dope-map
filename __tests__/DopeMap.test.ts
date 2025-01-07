@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DopeMap } from "../src";
-import { DopeMap as DopeDist } from "../dist/index.esm.js";
+import { DopeMap as DopeDist } from "../dist/index.js";
 
+new DopeDist<string, string>();
 import {
   nirvanaKey,
   nirvanaValue,

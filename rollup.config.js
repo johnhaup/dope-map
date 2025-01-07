@@ -7,39 +7,41 @@ import { dts } from "rollup-plugin-dts";
 const plugins = [
   resolve({
     extensions: [".ts", ".js"],
-    preferBuiltins: true,
+    preferBuiltins: false, // Include dependencies in the bundle
   }),
   commonjs(),
   typescript({
     tsconfig: "./tsconfig.json",
     declaration: true,
-    emitDeclarationOnly: false, // Ensure runtime + types are emitted
+    emitDeclarationOnly: false,
     rootDir: "./src",
     outDir: "./dist",
   }),
+  terser(),
 ];
 
-// 👉 **ESM Build (Minified)**
 export default [
+  // ESM Build
   {
     input: "src/index.ts",
     output: {
-      file: "dist/index.esm.js",
+      file: "dist/index.js", // Pure ESM build
       format: "esm",
       sourcemap: true,
     },
-    plugins: [...plugins, terser()],
-    external: [],
+    plugins,
+    external: [], // Bundle everything into one file
     treeshake: {
       moduleSideEffects: false,
     },
   },
-  // 👉 **Type Declarations Build (Unminified)**
+
+  // Type Declarations
   {
     input: "src/index.ts",
     output: {
       file: "dist/index.d.ts",
-      format: "es",
+      format: "esm",
     },
     plugins: [dts()],
   },

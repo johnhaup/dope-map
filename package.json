@@ -9,14 +9,14 @@
   },
   "version": "2.1.1",
   "type": "module",
-  "main": "./dist/index.esm.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js"
+      "import": "./dist/index.js"
     }
   },
   "scripts": {

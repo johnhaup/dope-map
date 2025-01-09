@@ -83,11 +83,9 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
         });
 
         resultsTable.push(`#### ${size.toLocaleString()} iterations`);
-        resultsTable.push(`| Map | ${METHODS.join(" | ")} | Size |`);
+        resultsTable.push(`| Map | ${METHODS.join(" | ")} |`);
         resultsTable.push(
-          `|-----------|${METHODS.map(() => "-----------").join(
-            "|"
-          )}|-----------|`
+          `|-----------|${METHODS.map(() => "-----------").join("|")} |`
         );
 
         MAP_IMPLEMENTATIONS.forEach(({ name }) => {
@@ -112,7 +110,7 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
             );
           });
 
-          const finalRow = row.join(" | ") + ` | ${size} |`;
+          const finalRow = row.join(" | ") + ` |`;
           resultsTable.push(finalRow);
         });
 

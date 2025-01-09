@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import hashIt from "hash-it";
-import DopeMap from "../src/dopeMap";
+import { DopeMap } from "../src";
 import DopeMapV1 from "../src/v1";
 import { generateMixedKeys, generatePrimitiveKeys } from "./utils";
 

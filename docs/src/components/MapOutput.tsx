@@ -55,7 +55,7 @@ export const MapOutput = ({ data }: { data: [any, any][] }) => {
     navigator.clipboard
       .writeText(copyContent)
       .then(() => {
-        toast.success(`Copied to clipboard:\n${copyContent}`);
+        toast(`Copied to clipboard:\n${copyContent}`);
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);

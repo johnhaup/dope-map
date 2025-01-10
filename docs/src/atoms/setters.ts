@@ -10,24 +10,20 @@ export const handleMapSetAtom = atom(null, (get, set, { key, value }) => {
   set(dopeMapAtom, (p) => ({ map: p.map, updatedAt }));
 });
 
-export const handleMapGetAtom = atom(null, (get, set, key) => {
-  const updatedAt = Date.now();
-  const mapResp = get(jsMapAtom).map.get(key);
-  const dopeResp = get(dopeMapAtom).map.get(key);
+export const handleKeyMapMethodAtom = atom(
+  null,
+  (
+    get,
+    set,
+    { key, method }: { key: any; method: "get" | "delete" | "has" }
+  ) => {
+    const updatedAt = Date.now();
+    const mapResp = get(jsMapAtom).map[method](key);
+    const dopeResp = get(dopeMapAtom).map[method](key);
 
-  set(jsMapAtom, (p) => ({ map: p.map, updatedAt }));
-  set(dopeMapAtom, (p) => ({ map: p.map, updatedAt }));
+    set(jsMapAtom, (p) => ({ map: p.map, updatedAt }));
+    set(dopeMapAtom, (p) => ({ map: p.map, updatedAt }));
 
-  alert(`Map response: ${mapResp}\nDopeMap response: ${dopeResp}`);
-});
-
-export const handleMapDeleteAtom = atom(null, (get, set, key) => {
-  const updatedAt = Date.now();
-  const mapResp = get(jsMapAtom).map.delete(key);
-  const dopeResp = get(dopeMapAtom).map.delete(key);
-
-  set(jsMapAtom, (p) => ({ map: p.map, updatedAt }));
-  set(dopeMapAtom, (p) => ({ map: p.map, updatedAt }));
-
-  alert(`Map response: ${mapResp}\nDopeMap response: ${dopeResp}`);
-});
+    return { map: mapResp, dopeMap: dopeResp };
+  }
+);

@@ -2,12 +2,9 @@ import { useSetAtom } from "jotai";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { FaPlay } from "react-icons/fa6";
-
-import {
-  handleMapDeleteAtom,
-  handleMapGetAtom,
-  handleMapSetAtom,
-} from "../atoms/setters";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { handleKeyMapMethodAtom, handleMapSetAtom } from "../atoms/setters";
 
 import { parseInput } from "../utils";
 import { EditorInput } from "./EditorInput";
@@ -63,23 +60,52 @@ const RunButton = styled.button`
   }
 `;
 
-const methods = ["set", "get", "delete"];
+const methods = ["set", "get", "has", "delete"];
 
 function KeyValueForm() {
   const [activeMethod, setActiveMethod] = useState("set");
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
   const setKeyValue = useSetAtom(handleMapSetAtom);
-  const getKeyValue = useSetAtom(handleMapGetAtom);
-  const deleteKeyValue = useSetAtom(handleMapDeleteAtom);
+  const handleKeyMapMethod = useSetAtom(handleKeyMapMethodAtom);
+
+  const handleResult = useCallback(
+    (type: string, result: any, errorValue: any) => {
+      const message = `${type} returned: ${result}`;
+      if (result === errorValue) {
+        toast.error(message);
+      } else {
+        toast.success(message);
+      }
+    },
+    []
+  );
 
   const onRunPress = useCallback(() => {
     if (activeMethod === "set") {
       setKeyValue({ key: parseInput(key), value: parseInput(value) });
+      toast.success("Set value!");
     } else if (activeMethod === "get") {
-      getKeyValue(parseInput(key));
+      const { map, dopeMap } = handleKeyMapMethod({
+        key: parseInput(key),
+        method: "get",
+      });
+      handleResult("DopeMap", dopeMap, undefined);
+      handleResult("Map", map, undefined);
     } else if (activeMethod === "delete") {
-      deleteKeyValue(parseInput(key));
+      const { map, dopeMap } = handleKeyMapMethod({
+        key: parseInput(key),
+        method: "delete",
+      });
+      handleResult("DopeMap", dopeMap, false);
+      handleResult("Map", map, false);
+    } else if (activeMethod === "has") {
+      const { map, dopeMap } = handleKeyMapMethod({
+        key: parseInput(key),
+        method: "has",
+      });
+      handleResult("DopeMap", dopeMap, false);
+      handleResult("Map", map, false);
     }
   }, [key, value, setKeyValue, activeMethod]);
 

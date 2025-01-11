@@ -10,10 +10,7 @@ A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 
 Ships with a hardcoded (dep-free) implementation of [fast-json-stable-stringify](https://github.com/epoberezkin/fast-json-stable-stringify) and [xxhashjs](https://github.com/pierrec/js-xxhash) as its hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
-#### RoadMap 🚧
-
-1. Enhance interactive demo site (check out the wip [here](https://johnhaup.github.io/dope-map))
-2. Native hash for node
+fafo [here](https://johnhaup.github.io/dope-map)
 
 ## Installation
 

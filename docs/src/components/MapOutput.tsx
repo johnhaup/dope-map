@@ -64,8 +64,8 @@ export const MapOutput = ({ data }: { data: [any, any][] }) => {
 
   return (
     <StyledMapOutput>
-      {data.map(([key, value]) => (
-        <div key={key}>
+      {data.map(([key, value], index) => (
+        <div key={`map-output-${index}`}>
           <strong onClick={() => handleCopy(key)}>
             {JSON.stringify(key, null, 2)}
             <span className="link-icon">

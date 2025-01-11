@@ -64,8 +64,8 @@ const methods = ["set", "get", "has", "delete"];
 
 function KeyValueForm() {
   const [activeMethod, setActiveMethod] = useState("set");
-  const [key, setKey] = useState("");
-  const [value, setValue] = useState("");
+  const [key, setKey] = useState("{\n  hey: 'you'\n}");
+  const [value, setValue] = useState("dope.");
   const setKeyValue = useSetAtom(handleMapSetAtom);
   const handleKeyMapMethod = useSetAtom(handleKeyMapMethodAtom);
 
@@ -83,8 +83,20 @@ function KeyValueForm() {
 
   const onRunPress = useCallback(() => {
     if (activeMethod === "set") {
-      setKeyValue({ key: parseInput(key), value: parseInput(value) });
-      toast.success("Set value!");
+      const { map, dopeMap } = setKeyValue({
+        key: parseInput(key),
+        value: parseInput(value),
+      });
+      if (dopeMap === 0) {
+        toast("DopeMap updated item");
+      } else {
+        toast.success("DopeMap set new item");
+      }
+      if (map === 0) {
+        toast("Map updated item");
+      } else {
+        toast.success("Map set new item");
+      }
     } else if (activeMethod === "get") {
       const { map, dopeMap } = handleKeyMapMethod({
         key: parseInput(key),

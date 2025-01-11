@@ -8,7 +8,7 @@ import { useAsciiText, larry3D } from "react-ascii-text";
 const AppWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0px 24px 16px 24px;
+  padding: 8px 24px 16px 24px;
   width: 100%;
   box-sizing: border-box;
   text-align: center;
@@ -43,7 +43,7 @@ const Dope = styled.img`
   border-radius: 24px;
   width: 100%;
   max-width: 400px;
-  margin: 24px 0px;
+  margin: 16px 0px;
 `;
 
 const AsciiWrapper = styled.div`
@@ -56,6 +56,12 @@ const AsciiWrapper = styled.div`
     text-align: center;
     gap: 0px;
   }
+`;
+
+const HelperText = styled.p`
+  font-size: 14px;
+  width: 100%;
+  max-width: 400px;
 `;
 
 const Ascii = styled.pre`
@@ -103,6 +109,10 @@ function App() {
         <HeaderColumn>
           <Title />
           <Dope src={require("./dope.jpg")} />
+          <HelperText>
+            Add items to the maps using the key/value inputs. Notice the
+            difference when you use an object for the key.
+          </HelperText>
           <GHIcon />
         </HeaderColumn>
         <HeaderColumn>

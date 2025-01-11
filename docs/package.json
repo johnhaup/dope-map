@@ -5,6 +5,7 @@
   "homepage": "https://johnhaup.github.io/dope-map",
   "dependencies": {
     "@johnhaup/dope-map": "^2.1.1",
+    "@uidotdev/usehooks": "^2.4.1",
     "ace-builds": "^1.37.1",
     "cra-template-typescript": "1.2.0",
     "hash-it": "^6.0.0",
@@ -44,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^19.0.4",
     "gh-pages": "^6.2.0"
   }
 }

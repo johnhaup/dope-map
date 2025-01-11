@@ -4,7 +4,7 @@ import { FiCopy } from "react-icons/fi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const StyledMapOutput = styled.pre`
+const StyledMapOutput = styled.pre<{ $color: string; $hoverColor?: string }>`
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -19,7 +19,7 @@ const StyledMapOutput = styled.pre`
 
   strong {
     cursor: pointer;
-    color: #4fa3d1;
+    color: ${({ $color }) => $color};
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -39,12 +39,22 @@ const StyledMapOutput = styled.pre`
   }
 
   strong:hover {
-    color: rgb(123, 198, 239);
+    color: ${({ $hoverColor }) => $hoverColor};
     font-weight: 700;
   }
 `;
 
-export const MapOutput = ({ data }: { data: [any, any][] }) => {
+interface Props {
+  data: [any, any][];
+  color?: string;
+  hoverColor?: string;
+}
+
+export const MapOutput = ({
+  data,
+  color = "#4fa3d1",
+  hoverColor = "#ff9ff3",
+}: Props) => {
   const handleCopy = (key: any) => {
     let copyContent = key;
 
@@ -63,7 +73,7 @@ export const MapOutput = ({ data }: { data: [any, any][] }) => {
   };
 
   return (
-    <StyledMapOutput>
+    <StyledMapOutput $color={color} $hoverColor={hoverColor}>
       {data.map(([key, value], index) => (
         <div key={`map-output-${index}`}>
           <strong onClick={() => handleCopy(key)}>

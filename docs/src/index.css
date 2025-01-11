@@ -17,3 +17,8 @@ code {
   font-size: 40px;
   color: black;
 }
+
+.ace_comment {
+  color: #bdc3c7 !important;
+  font-style: italic;
+}

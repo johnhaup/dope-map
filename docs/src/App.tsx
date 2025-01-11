@@ -111,7 +111,8 @@ function App() {
           <Dope src={require("./dope.jpg")} />
           <HelperText>
             Add items to the maps using the key/value inputs. Notice the
-            difference when you use an object for the key.
+            difference when you use an object for the key. Try switching the
+            order of the keys!
           </HelperText>
           <GHIcon />
         </HeaderColumn>

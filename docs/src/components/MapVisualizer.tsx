@@ -9,9 +9,9 @@ import {
 import styled from "styled-components";
 import { MapOutput } from "./MapOutput";
 
-const SectionHeader = styled.h2`
+const SectionHeader = styled.h3`
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 `;
 
 const VisualizerContainer = styled.div`
@@ -81,25 +81,25 @@ function MapVisualizer() {
       <VisualizerContainer>
         <OutputContainer>
           <OutputHeader>
-            <MapHeader>Map</MapHeader>
+            <MapHeader>DopeMap</MapHeader>
             <SizeContainer>
-              <MapHeader>{`Size: ${mapSize}`}</MapHeader>
+              <MapHeader>{`Size: ${dopeMapSize}`}</MapHeader>
             </SizeContainer>
           </OutputHeader>
-          <MapOutput data={mapData} />
+          <MapOutput data={dopeMapData} />
         </OutputContainer>
         <OutputContainer>
           <OutputHeader>
-            <MapHeader style={{ color: "#3ca94b" }}>DopeMap</MapHeader>
+            <MapHeader style={{ color: "#3ca94b" }}>Map</MapHeader>
             <SizeContainer>
               <MapHeader
                 style={{
                   color: "#3ca94b",
                 }}
-              >{`Size: ${dopeMapSize}`}</MapHeader>
+              >{`Size: ${mapSize}`}</MapHeader>
             </SizeContainer>
           </OutputHeader>
-          <MapOutput data={dopeMapData} />
+          <MapOutput data={mapData} color="#3ca94b" />
         </OutputContainer>
       </VisualizerContainer>
     </div>

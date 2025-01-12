@@ -1,5 +1,5 @@
-import { useSetAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useMemo, useState } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
 import styled from "styled-components";
 import { toast } from "react-toastify";
@@ -8,6 +8,8 @@ import { handleKeyMapMethodAtom, handleMapSetAtom } from "../atoms/setters";
 
 import { parseInput } from "../utils";
 import { EditorInput } from "./EditorInput";
+import { keyReferenceAtom } from "../atoms/state";
+import { DopeColors } from "../constants";
 
 const FormContainer = styled.div`
   flex-direction: column;
@@ -31,10 +33,9 @@ const ButtonGroup = styled.div`
 
 const MethodButton = styled.button`
   padding: 10px 15px;
-  border: "1px solid #000"
-  border-radius: 4px;
-  background-color: "#fff";
-  color: "#000"
+  border: "1px solid ${DopeColors.black}"
+  background-color: ${DopeColors.white};
+  color: ${DopeColors.black}
   cursor: pointer;
   font-family: "Courier New", Courier, monospace; /* Monospace font */
   font-weight: 600;
@@ -44,18 +45,17 @@ const MethodButton = styled.button`
   white-space: nowrap;
   text-align: center;
   justify-content: center;
+  border-radius: 8px;
 
   @media (max-width: 450px) {
-    // white-space: wrap;
     min-width: 48%;
+    white-space: wrap;
     text-overflow: ellipsis;
     overflow: hidden;
-  text-align: left;
-
   }
 
   &:hover {
-    background-color: "#f0f0f0";
+    background-color: ${DopeColors.offWhite};
   }
 `;
 
@@ -67,6 +67,7 @@ function KeyValueForm() {
   const [value, setValue] = useState('"dope."');
   const setKeyValue = useSetAtom(handleMapSetAtom);
   const handleKeyMapMethod = useSetAtom(handleKeyMapMethodAtom);
+  const [keyReference, setKeyReference] = useAtom(keyReferenceAtom);
 
   const handleResult = useCallback(
     (type: string, result: any, errorValue: any) => {
@@ -82,9 +83,11 @@ function KeyValueForm() {
 
   const handleMethodClick = useCallback(
     (activeMethod: string) => {
+      const finalKey = keyReference || parseInput(key);
+
       if (activeMethod === "set") {
         const { map, dopeMap } = setKeyValue({
-          key: parseInput(key),
+          key: finalKey,
           value: parseInput(value),
         });
         if (dopeMap === 0) {
@@ -99,28 +102,29 @@ function KeyValueForm() {
         }
       } else if (activeMethod === "get") {
         const { map, dopeMap } = handleKeyMapMethod({
-          key: parseInput(key),
+          key: finalKey,
           method: "get",
         });
         handleResult("DopeMap", dopeMap, undefined);
         handleResult("Map", map, undefined);
       } else if (activeMethod === "delete") {
         const { map, dopeMap } = handleKeyMapMethod({
-          key: parseInput(key),
+          key: finalKey,
           method: "delete",
         });
         handleResult("DopeMap", dopeMap, false);
         handleResult("Map", map, false);
+        setKeyReference(undefined);
       } else if (activeMethod === "has") {
         const { map, dopeMap } = handleKeyMapMethod({
-          key: parseInput(key),
+          key: finalKey,
           method: "has",
         });
         handleResult("DopeMap", dopeMap, false);
         handleResult("Map", map, false);
       }
     },
-    [key, value, setKeyValue]
+    [key, value, setKeyValue, keyReference, setKeyReference]
   );
 
   const renderMethodButton = useCallback(
@@ -141,7 +145,7 @@ function KeyValueForm() {
         </MethodButton>
       );
     },
-    [windowSize]
+    [windowSize, handleMethodClick, key, value]
   );
 
   return (
@@ -150,15 +154,10 @@ function KeyValueForm() {
         <EditorInput
           label="Key"
           value={key}
+          refValue={keyReference}
           onChange={setKey}
-          borderRadiusConfig="top"
         />
-        <EditorInput
-          label="Value"
-          value={value}
-          onChange={setValue}
-          borderRadiusConfig="bottom"
-        />
+        <EditorInput label="Value" value={value} onChange={setValue} />
       </EditorsContainer>
       <ButtonGroup>{methods.map(renderMethodButton)}</ButtonGroup>
     </FormContainer>

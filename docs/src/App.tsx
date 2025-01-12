@@ -5,6 +5,9 @@ import MapVisualizer from "./components/MapVisualizer";
 import { GHIcon } from "./components/GHIcon";
 import { useAsciiText, larry3D } from "react-ascii-text";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const DOPE_IMG = require("./dope.jpg");
+
 const AppWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
@@ -108,11 +111,12 @@ function App() {
       <HeaderWrapperContainer>
         <HeaderColumn>
           <Title />
-          <Dope src={require("./dope.jpg")} />
+          <Dope src={DOPE_IMG} />
           <HelperText>
             Add items to the maps using the key/value inputs. Notice the
             difference when you use an object for the key. Try switching the
-            order of the keys!
+            order of the keys! You can use references to existing keys by
+            clicking on them in the visualization.
           </HelperText>
           <GHIcon />
         </HeaderColumn>

@@ -7,37 +7,33 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
 import { parseInput } from "../utils";
+import { useSetAtom } from "jotai";
+import { keyReferenceAtom } from "../atoms/state";
+import { DopeColors } from "../constants";
 
-const EditorWrapper = styled.div`
+const EditorWrapper = styled.div<{ $highlight?: unknown }>`
   flex: 1;
+  margin: 16px 0px;
+
+  span {
+    color: ${({ $highlight }) =>
+      $highlight ? `${DopeColors.pink} !important` : undefined};
+  }
 `;
 
 interface Props {
   label: string;
   onChange: (value: string) => void;
-  borderRadiusConfig?: "top" | "bottom" | "none";
   value: string;
+  refValue?: unknown;
 }
 
-export function EditorInput({
-  label,
-  onChange,
-  value,
-  borderRadiusConfig,
-}: Props) {
+export function EditorInput({ label, onChange, value, refValue }: Props) {
   const _editor = useRef<AceEditor>(null);
   const windowSize = useWindowSize();
+  const setKeyReference = useSetAtom(keyReferenceAtom);
 
   const editorProps = useMemo(() => {
-    const borderRadius =
-      borderRadiusConfig === "top"
-        ? "8px 8px 0px 0px"
-        : borderRadiusConfig === "bottom"
-        ? "0px 0px 8px 8px"
-        : borderRadiusConfig === "none"
-        ? "0px"
-        : "8px";
-
     return {
       mode: "javascript",
       theme: "monokai",
@@ -51,15 +47,16 @@ export function EditorInput({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: false,
         enableSnippets: false,
-        showLineNumbers: false,
+        showLineNumbers: true,
         tabSize: 2,
         useWorker: false,
       },
       style: {
-        borderRadius,
+        borderRadius: "8px",
+        color: refValue ? `${DopeColors.pink} !important` : undefined,
       },
     };
-  }, [windowSize]);
+  }, [refValue, windowSize]);
 
   const validateString = (parsed: string) => {
     const quotesRegex = /^(['"]).*\1$/;
@@ -93,21 +90,41 @@ export function EditorInput({
   }, [value]);
 
   const displayValue = useMemo(() => {
-    return `// ${label}\n${value}`;
-  }, [label, value]);
+    if (refValue) {
+      return `// ${label} - Reference\n${value}`;
+    }
 
-  const onValueChange = useCallback((newValue: string) => {
-    const strippedValue = newValue.replace(`// ${label}\n`, "");
-    onChange(strippedValue);
-  }, []);
+    return `// ${label}\n${value}`;
+  }, [label, value, refValue]);
+
+  const onValueChange = useCallback(
+    (newValue: string) => {
+      setKeyReference(undefined);
+      const strippedValue = newValue
+        .replace(`// ${label} - Reference\n`, "")
+        .replace(`// ${label}\n`, "");
+      onChange(strippedValue);
+    },
+    [label, onChange]
+  );
 
   return (
-    <EditorWrapper>
+    <EditorWrapper $highlight={refValue}>
       <AceEditor
         {...editorProps}
         value={displayValue}
         onChange={onValueChange}
         ref={_editor}
+        markers={[
+          {
+            startRow: 0,
+            startCol: 0,
+            endRow: 0,
+            endCol: 100,
+            className: "readonly-marker",
+            type: "fullLine",
+          },
+        ]}
       />
     </EditorWrapper>
   );

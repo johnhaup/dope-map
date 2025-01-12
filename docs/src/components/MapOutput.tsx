@@ -1,90 +1,100 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
-import { FiCopy } from "react-icons/fi";
+import { FiLink } from "react-icons/fi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAtom } from "jotai";
+import { keyReferenceAtom } from "../atoms/state";
+import { DopeColors } from "../constants";
 
-const StyledMapOutput = styled.pre<{ $color: string; $hoverColor?: string }>`
+const StyledMapOutput = styled.pre`
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 1.4;
   text-align: left;
+`;
 
-  div {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+const Entry = styled.div`
+  border-bottom: 1px solid ${DopeColors.darkGray};
+`;
 
-  strong {
-    cursor: pointer;
-    color: ${({ $color }) => $color};
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    position: relative;
+const Key = styled.strong<{
+  $color: string;
+}>`
+  cursor: pointer;
+  color: ${({ $color }) => $color};
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding: 4px 0px 4px 8px;
 
-    .link-icon {
-      visibility: hidden;
-      opacity: 0;
-      margin-left: 4px;
-      transition: visibility 0.2s, opacity 0.2s;
-    }
-
-    &:hover .link-icon {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-
-  strong:hover {
-    color: ${({ $hoverColor }) => $hoverColor};
+  &:hover {
+    color: ${DopeColors.lightPink};
     font-weight: 700;
+    opacity: 0.8;
+    background-color: ${DopeColors.darkGray};
+    border-radius: 8px;
   }
 `;
 
+const LinkIcon = styled.span<{ $show: boolean }>`
+  visibility: ${({ $show }) => ($show ? "visibile" : "hidden")};
+  margin-horizontalt: 4px;
+`;
+
 interface Props {
-  data: [any, any][];
+  data: [unknown, unknown][];
   color?: string;
-  hoverColor?: string;
 }
 
-export const MapOutput = ({
-  data,
-  color = "#4fa3d1",
-  hoverColor = "#ff9ff3",
-}: Props) => {
-  const handleCopy = (key: any) => {
-    let copyContent = key;
+export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
+  const [keyReference, setKeyReference] = useAtom(keyReferenceAtom);
 
-    if (typeof key === "object" && key !== null) {
-      copyContent = JSON.stringify(key, null, 2);
-    }
+  const renderEntry = useCallback(
+    (index: number) => {
+      const [key, value] = data[index];
+      const isLinked = keyReference === key;
+      const $color = isLinked ? DopeColors.pink : color;
 
-    navigator.clipboard
-      .writeText(copyContent)
-      .then(() => {
-        toast(`Copied to clipboard:\n${copyContent}`);
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
-  };
+      const onClick = () => {
+        if (isLinked) {
+          setKeyReference(undefined);
+          toast(`Cleared reference!`);
+        } else {
+          setKeyReference(key);
+          toast(`Copied key reference to key input!`);
+        }
+      };
 
-  return (
-    <StyledMapOutput $color={color} $hoverColor={hoverColor}>
-      {data.map(([key, value], index) => (
-        <div key={`map-output-${index}`}>
-          <strong onClick={() => handleCopy(key)}>
+      return (
+        <Entry key={`map-output-${index}`}>
+          {index}:
+          <Key onClick={onClick} $color={$color}>
             {JSON.stringify(key, null, 2)}
-            <span className="link-icon">
-              <FiCopy />
-            </span>
-          </strong>
+            <LinkIcon $show={isLinked}>
+              <FiLink />
+            </LinkIcon>
+          </Key>
           : {JSON.stringify(value, null, 2)}
-        </div>
-      ))}
-    </StyledMapOutput>
+        </Entry>
+      );
+    },
+    [keyReference, data]
   );
+
+  console.log(
+    data
+      .map((_, i) => i)
+      .reverse()
+      .map((i) => data[i])
+  );
+
+  const reversedIndexes = useMemo(
+    // Reverse render array without mutating original
+    () => data.map((_, i) => i).reverse(),
+    [data]
+  );
+
+  return <StyledMapOutput>{reversedIndexes.map(renderEntry)}</StyledMapOutput>;
 };

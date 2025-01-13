@@ -1,9 +1,12 @@
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
+import { DopeHeader } from "./components/DopeHeader";
+import { DopeMascot } from "./components/DopeMascot";
+import { GHIcon } from "./components/GHIcon";
+import { InfoModal } from "./components/InfoModal";
 import KeyValueForm from "./components/KeyValueForm";
 import MapVisualizer from "./components/MapVisualizer";
-import { GHIcon } from "./components/GHIcon";
-import { useAsciiText, larry3D } from "react-ascii-text";
+import { useWindowSize } from "@uidotdev/usehooks";
 
 const AppWrapper = styled.div`
   max-width: 1200px;
@@ -18,12 +21,11 @@ const AppWrapper = styled.div`
   }
 `;
 
-const HeaderColumn = styled.div`
+const HeaderRow = styled.div`
   display: flex;
   flex: 1;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 
 const HeaderWrapperContainer = styled.div`
@@ -39,87 +41,33 @@ const HeaderWrapperContainer = styled.div`
   }
 `;
 
-const Dope = styled.img`
-  border-radius: 24px;
-  width: 100%;
-  max-width: 400px;
-  margin: 16px 0px;
-`;
-
-const AsciiWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-
-  @media (max-width: 450px) {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0px;
-  }
-`;
-
-const HelperText = styled.p`
-  font-size: 14px;
-  width: 100%;
-  max-width: 400px;
-`;
-
-const Ascii = styled.pre`
-  font-size: 6px;
-`;
-
-function Title() {
-  const mapRef = useAsciiText({
-    animationCharacters: "▒░█",
-    animationCharacterSpacing: 1,
-    animationDelay: 2000,
-    animationDirection: "down",
-    animationInterval: 1000,
-    animationLoop: true,
-    animationSpeed: 30,
-    font: larry3D,
-    isAnimated: false,
-    text: ["Map vs"],
-  });
-  const dopeMapRef = useAsciiText({
-    animationCharacters: "▒░█",
-    animationCharacterSpacing: 1,
-    animationDelay: 2000,
-    animationDirection: "down",
-    animationInterval: 1000,
-    animationLoop: true,
-    animationSpeed: 30,
-    font: larry3D,
-    isAnimated: false,
-    text: ["DOPEMAP"],
-  });
-
-  return (
-    <AsciiWrapper>
-      <Ascii ref={mapRef}></Ascii>
-      <Ascii ref={dopeMapRef}></Ascii>
-    </AsciiWrapper>
-  );
-}
-
 function App() {
+  const windowSize = useWindowSize();
+
   return (
     <AppWrapper>
+      <InfoModal />
       <HeaderWrapperContainer>
-        <HeaderColumn>
-          <Title />
-          <Dope src={require("./dope.jpg")} />
-          <HelperText>
-            Add items to the maps using the key/value inputs. Notice the
-            difference when you use an object for the key.
-          </HelperText>
-          <GHIcon />
-        </HeaderColumn>
-        <HeaderColumn>
-          <KeyValueForm />
-        </HeaderColumn>
+        <HeaderRow>
+          <div style={{ display: "flex" }}>
+            {windowSize.width > 768 && (
+              <DopeMascot
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "8px",
+                  margin: "8px 16px 8px 0px",
+                }}
+              />
+            )}
+            <DopeHeader />
+          </div>
+          {windowSize.width > 768 && <GHIcon />}
+        </HeaderRow>
       </HeaderWrapperContainer>
+      <KeyValueForm />
       <MapVisualizer />
+      {windowSize.width <= 768 && <GHIcon />}
       <ToastContainer
         aria-label={"toast"}
         position="bottom-right"

@@ -1,8 +1,11 @@
-import React from "react";
+import { useCallback, useMemo } from "react";
 import styled from "styled-components";
-import { FiCopy } from "react-icons/fi";
+import { FiLink } from "react-icons/fi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAtom } from "jotai";
+import { keyReferenceAtom } from "../atoms/state";
+import { DopeColors } from "../constants";
 
 const StyledMapOutput = styled.pre`
   margin: 0;
@@ -10,71 +13,84 @@ const StyledMapOutput = styled.pre`
   word-wrap: break-word;
   line-height: 1.4;
   text-align: left;
+`;
 
-  div {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+const Entry = styled.div<{
+  $hide: boolean;
+}>`
+  border-bottom: ${({ $hide }) =>
+    $hide ? undefined : `1px solid ${DopeColors.darkGray}`};
+`;
 
-  strong {
-    cursor: pointer;
-    color: #4fa3d1;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    position: relative;
+const Key = styled.strong<{
+  $color: string;
+}>`
+  cursor: pointer;
+  color: ${({ $color }) => $color};
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding: 4px 0px 4px 8px;
 
-    .link-icon {
-      visibility: hidden;
-      opacity: 0;
-      margin-left: 4px;
-      transition: visibility 0.2s, opacity 0.2s;
-    }
-
-    &:hover .link-icon {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-
-  strong:hover {
-    color: rgb(123, 198, 239);
+  &:hover {
+    color: ${DopeColors.lightPink};
     font-weight: 700;
+    opacity: 0.8;
+    background-color: ${DopeColors.darkGray};
+    border-radius: 8px;
   }
 `;
 
-export const MapOutput = ({ data }: { data: [any, any][] }) => {
-  const handleCopy = (key: any) => {
-    let copyContent = key;
+const LinkIcon = styled.span<{ $show: boolean }>`
+  visibility: ${({ $show }) => ($show ? "visibile" : "hidden")};
+  margin-horizontalt: 4px;
+`;
 
-    if (typeof key === "object" && key !== null) {
-      copyContent = JSON.stringify(key, null, 2);
-    }
+interface Props {
+  data: [unknown, unknown][];
+  color?: string;
+}
 
-    navigator.clipboard
-      .writeText(copyContent)
-      .then(() => {
-        toast(`Copied to clipboard:\n${copyContent}`);
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
-  };
+export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
+  const [keyReference, setKeyReference] = useAtom(keyReferenceAtom);
 
-  return (
-    <StyledMapOutput>
-      {data.map(([key, value], index) => (
-        <div key={`map-output-${index}`}>
-          <strong onClick={() => handleCopy(key)}>
+  const renderEntry = useCallback(
+    (index: number) => {
+      const [key, value] = data[index];
+      const isLinked = keyReference === key;
+      const $color = isLinked ? DopeColors.pink : color;
+
+      const onClick = () => {
+        if (isLinked) {
+          setKeyReference(undefined);
+          toast(`Cleared reference!`);
+        } else {
+          setKeyReference(key);
+          toast(`Copied key reference to key input!`);
+        }
+      };
+
+      return (
+        <Entry key={`map-output-${index}`} $hide={index === 0}>
+          {index}:
+          <Key onClick={onClick} $color={$color}>
             {JSON.stringify(key, null, 2)}
-            <span className="link-icon">
-              <FiCopy />
-            </span>
-          </strong>
+            <LinkIcon $show={isLinked}>
+              <FiLink />
+            </LinkIcon>
+          </Key>
           : {JSON.stringify(value, null, 2)}
-        </div>
-      ))}
-    </StyledMapOutput>
+        </Entry>
+      );
+    },
+    [keyReference, data]
   );
+
+  const reversedIndexes = useMemo(
+    // Reverse render array without mutating original
+    () => data.map((_, i) => i).reverse(),
+    [data]
+  );
+
+  return <StyledMapOutput>{reversedIndexes.map(renderEntry)}</StyledMapOutput>;
 };

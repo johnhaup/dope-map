@@ -8,20 +8,17 @@ import {
 
 import styled from "styled-components";
 import { MapOutput } from "./MapOutput";
-
-const SectionHeader = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
+import { DopeColors } from "../constants";
 
 const VisualizerContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 16px;
   align-items: stretch;
   width: 100%;
   height: 400px;
   overflow: hidden;
+  margin-top: 8px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -32,12 +29,12 @@ const VisualizerContainer = styled.div`
 
 const OutputContainer = styled.div`
   flex: 1;
-  background-color: #1e1e1e;
-  color: #dcdcdc;
+  background-color: ${DopeColors.black};
+  color: ${DopeColors.offWhite};
   font-family: "Courier New", monospace;
   font-size: 14px;
-  border: 1px solid #333;
-  border-radius: 4px;
+  border: 1px solid ${DopeColors.darkGray};
+  border-radius: 8px;
   overflow: auto;
   padding: 10px;
   margin-bottom: 20px;
@@ -48,7 +45,7 @@ const OutputHeader = styled.div`
 `;
 
 const MapHeader = styled.h3`
-  color: #4fa3d1;
+  color: ${DopeColors.blue};
   margin: 0;
 `;
 
@@ -65,7 +62,7 @@ const SizeContainer = styled.div`
 const Hint = styled.p`
   font-size: 12px;
   font-style: italic;
-  margin: undefined;
+  margin: 0px;
 `;
 
 function MapVisualizer() {
@@ -76,30 +73,32 @@ function MapVisualizer() {
 
   return (
     <div>
-      <SectionHeader>Map Visualization</SectionHeader>
-      <Hint>Click on a key to copy it to the clipboard</Hint>
+      <Hint>
+        To test using a reference key, you can click a key in a Map. Note that
+        the entries below are shown in reverse order.
+      </Hint>
       <VisualizerContainer>
         <OutputContainer>
           <OutputHeader>
-            <MapHeader>Map</MapHeader>
+            <MapHeader>DopeMap</MapHeader>
             <SizeContainer>
-              <MapHeader>{`Size: ${mapSize}`}</MapHeader>
-            </SizeContainer>
-          </OutputHeader>
-          <MapOutput data={mapData} />
-        </OutputContainer>
-        <OutputContainer>
-          <OutputHeader>
-            <MapHeader style={{ color: "#3ca94b" }}>DopeMap</MapHeader>
-            <SizeContainer>
-              <MapHeader
-                style={{
-                  color: "#3ca94b",
-                }}
-              >{`Size: ${dopeMapSize}`}</MapHeader>
+              <MapHeader>{`Size: ${dopeMapSize}`}</MapHeader>
             </SizeContainer>
           </OutputHeader>
           <MapOutput data={dopeMapData} />
+        </OutputContainer>
+        <OutputContainer>
+          <OutputHeader>
+            <MapHeader style={{ color: DopeColors.green }}>Map</MapHeader>
+            <SizeContainer>
+              <MapHeader
+                style={{
+                  color: DopeColors.green,
+                }}
+              >{`Size: ${mapSize}`}</MapHeader>
+            </SizeContainer>
+          </OutputHeader>
+          <MapOutput data={mapData} color={DopeColors.green} />
         </OutputContainer>
       </VisualizerContainer>
     </div>

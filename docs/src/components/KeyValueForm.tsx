@@ -1,13 +1,15 @@
-import { useSetAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useMemo, useState } from "react";
+import { useWindowSize } from "@uidotdev/usehooks";
 import styled from "styled-components";
-import { FaPlay } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { handleKeyMapMethodAtom, handleMapSetAtom } from "../atoms/setters";
 
 import { parseInput } from "../utils";
 import { EditorInput } from "./EditorInput";
+import { keyReferenceAtom } from "../atoms/state";
+import { DopeColors } from "../constants";
 
 const FormContainer = styled.div`
   flex-direction: column;
@@ -15,59 +17,63 @@ const FormContainer = styled.div`
   width: 100%;
 `;
 
-const EditorContainer = styled.div`
-  margin-bottom: 20px;
-`;
+const EditorsContainer = styled.div`
+  display: flex;
+  margin: 8px 0px;
+  flex-direction: row;
+  gap: 16px;
 
-const ButtonGroup = styled.div`
-  margin: 20px 0px;
-`;
-
-const MethodButton = styled.button<{ $isActive: boolean }>`
-  margin: 5px;
-  padding: 10px 15px;
-  border: ${({ $isActive }) =>
-    $isActive ? "1px solid black" : "1px solid black"};
-  border-radius: 4px;
-  background-color: ${({ $isActive }) =>
-    $isActive ? "#1e1e1e" : "white"}; /* Dark background color for active */
-  color: ${({ $isActive }) =>
-    $isActive ? "#f0f0f0" : "black"}; /* Light text color for active */
-  cursor: pointer;
-  font-family: "Courier New", Courier, monospace; /* Monospace font */
-  font-weight: ${({ $isActive }) => ($isActive ? 800 : 600)};
-  font-size: 16px;
-
-  &:hover {
-    background-color: ${({ $isActive }) =>
-      $isActive
-        ? "#2d2d2d"
-        : "#f0f0f0"}; /* Slightly lighter background on hover */
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 `;
 
-const RunButton = styled.button`
-  width: 100%;
-  padding: 10px 0px;
-  background-color: #4caf50;
-  color: white;
+const ButtonGroup = styled.div`
+  margin: 16px 0px;
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const MethodButton = styled.button`
+  padding: 10px 15px;
+  border: "1px solid ${DopeColors.black}"
+  background-color: ${DopeColors.white};
+  color: ${DopeColors.black}
   cursor: pointer;
-  border-radius: 4px;
-  border-width: 0px;
+  font-family: "Courier New", Courier, monospace; /* Monospace font */
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  flex: 1;
+  white-space: nowrap;
+  text-align: center;
+  justify-content: center;
+  border-radius: 8px;
+
+  @media (max-width: 450px) {
+    min-width: 48%;
+    white-space: wrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 
   &:hover {
-    background-color: #45a049;
+    background-color: ${DopeColors.offWhite};
   }
 `;
 
 const methods = ["set", "get", "has", "delete"];
 
 function KeyValueForm() {
-  const [activeMethod, setActiveMethod] = useState("set");
-  const [key, setKey] = useState("{\n  hey: 'you'\n}");
-  const [value, setValue] = useState("dope.");
+  const windowSize = useWindowSize();
+  const [key, setKey] = useState('{\n  hey: "you",\n  whats: "up"\n}');
+  const [value, setValue] = useState('"dope."');
   const setKeyValue = useSetAtom(handleMapSetAtom);
   const handleKeyMapMethod = useSetAtom(handleKeyMapMethodAtom);
+  const [keyReference, setKeyReference] = useAtom(keyReferenceAtom);
 
   const handleResult = useCallback(
     (type: string, result: any, errorValue: any) => {
@@ -81,71 +87,85 @@ function KeyValueForm() {
     []
   );
 
-  const onRunPress = useCallback(() => {
-    if (activeMethod === "set") {
-      const { map, dopeMap } = setKeyValue({
-        key: parseInput(key),
-        value: parseInput(value),
-      });
-      if (dopeMap === 0) {
-        toast("DopeMap updated item");
-      } else {
-        toast.success("DopeMap set new item");
+  const handleMethodClick = useCallback(
+    (activeMethod: string) => {
+      const finalKey = keyReference || parseInput(key);
+
+      if (activeMethod === "set") {
+        const { map, dopeMap } = setKeyValue({
+          key: finalKey,
+          value: parseInput(value),
+        });
+        if (dopeMap === 0) {
+          toast("DopeMap updated item");
+        } else {
+          toast.success("DopeMap set new item");
+        }
+        if (map === 0) {
+          toast("Map updated item");
+        } else {
+          toast.success("Map set new item");
+        }
+      } else if (activeMethod === "get") {
+        const { map, dopeMap } = handleKeyMapMethod({
+          key: finalKey,
+          method: "get",
+        });
+        handleResult("DopeMap", dopeMap, undefined);
+        handleResult("Map", map, undefined);
+      } else if (activeMethod === "delete") {
+        const { map, dopeMap } = handleKeyMapMethod({
+          key: finalKey,
+          method: "delete",
+        });
+        handleResult("DopeMap", dopeMap, false);
+        handleResult("Map", map, false);
+        setKeyReference(undefined);
+      } else if (activeMethod === "has") {
+        const { map, dopeMap } = handleKeyMapMethod({
+          key: finalKey,
+          method: "has",
+        });
+        handleResult("DopeMap", dopeMap, false);
+        handleResult("Map", map, false);
       }
-      if (map === 0) {
-        toast("Map updated item");
-      } else {
-        toast.success("Map set new item");
-      }
-    } else if (activeMethod === "get") {
-      const { map, dopeMap } = handleKeyMapMethod({
-        key: parseInput(key),
-        method: "get",
-      });
-      handleResult("DopeMap", dopeMap, undefined);
-      handleResult("Map", map, undefined);
-    } else if (activeMethod === "delete") {
-      const { map, dopeMap } = handleKeyMapMethod({
-        key: parseInput(key),
-        method: "delete",
-      });
-      handleResult("DopeMap", dopeMap, false);
-      handleResult("Map", map, false);
-    } else if (activeMethod === "has") {
-      const { map, dopeMap } = handleKeyMapMethod({
-        key: parseInput(key),
-        method: "has",
-      });
-      handleResult("DopeMap", dopeMap, false);
-      handleResult("Map", map, false);
-    }
-  }, [key, value, setKeyValue, activeMethod]);
+    },
+    [key, value, setKeyValue, keyReference, setKeyReference]
+  );
 
   const renderMethodButton = useCallback(
-    (method) => (
-      <MethodButton
-        key={method}
-        onClick={() => setActiveMethod(method)}
-        $isActive={activeMethod === method}
-      >
-        {`.${method}()`}
-      </MethodButton>
-    ),
-    [activeMethod]
+    (method: string) => {
+      const onClick = () => handleMethodClick(method);
+
+      // function getTextBasedOnMediaQuery() {
+      //   if (windowSize.width < 450) {
+      //     return `.${method}()`;
+      //   } else {
+      //     return `.${method}(${key}${method === "set" ? `, ${value}` : ""})`;
+      //   }
+      // }
+
+      return (
+        <MethodButton key={method} onClick={onClick}>
+          {`.${method}()`}
+        </MethodButton>
+      );
+    },
+    [windowSize, handleMethodClick, key, value]
   );
 
   return (
     <FormContainer>
+      <EditorsContainer>
+        <EditorInput
+          label="Key"
+          value={key}
+          refValue={keyReference}
+          onChange={setKey}
+        />
+        <EditorInput label="Value" value={value} onChange={setValue} />
+      </EditorsContainer>
       <ButtonGroup>{methods.map(renderMethodButton)}</ButtonGroup>
-      <EditorContainer>
-        <EditorInput label="Key:" value={key} onChange={setKey} />
-        {activeMethod === "set" && (
-          <EditorInput label="Value:" value={value} onChange={setValue} />
-        )}
-      </EditorContainer>
-      <RunButton onClick={onRunPress}>
-        <FaPlay size={24} />
-      </RunButton>
     </FormContainer>
   );
 }

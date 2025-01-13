@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { FiLink } from "react-icons/fi";
 import { toast } from "react-toastify";
@@ -15,8 +15,11 @@ const StyledMapOutput = styled.pre`
   text-align: left;
 `;
 
-const Entry = styled.div`
-  border-bottom: 1px solid ${DopeColors.darkGray};
+const Entry = styled.div<{
+  $hide: boolean;
+}>`
+  border-bottom: ${({ $hide }) =>
+    $hide ? undefined : `1px solid ${DopeColors.darkGray}`};
 `;
 
 const Key = styled.strong<{
@@ -68,7 +71,7 @@ export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
       };
 
       return (
-        <Entry key={`map-output-${index}`}>
+        <Entry key={`map-output-${index}`} $hide={index === 0}>
           {index}:
           <Key onClick={onClick} $color={$color}>
             {JSON.stringify(key, null, 2)}
@@ -81,13 +84,6 @@ export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
       );
     },
     [keyReference, data]
-  );
-
-  console.log(
-    data
-      .map((_, i) => i)
-      .reverse()
-      .map((i) => data[i])
   );
 
   const reversedIndexes = useMemo(

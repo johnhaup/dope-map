@@ -10,20 +10,15 @@ import styled from "styled-components";
 import { MapOutput } from "./MapOutput";
 import { DopeColors } from "../constants";
 
-const SectionHeader = styled.h3`
-  text-align: center;
-  margin-bottom: 8px;
-`;
-
 const VisualizerContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 16px;
   align-items: stretch;
   width: 100%;
   height: 400px;
   overflow: hidden;
-  margin-top: 16px;
+  margin-top: 8px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -78,9 +73,10 @@ function MapVisualizer() {
 
   return (
     <div>
-      <SectionHeader>Map Visualization</SectionHeader>
-      <Hint>Click on a key to copy its reference to the key input.</Hint>
-      <Hint>Note that the entries below are shown in reverse order.</Hint>
+      <Hint>
+        To test using a reference key, you can click a key in a Map. Note that
+        the entries below are shown in reverse order.
+      </Hint>
       <VisualizerContainer>
         <OutputContainer>
           <OutputHeader>

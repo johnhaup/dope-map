@@ -13,7 +13,6 @@ import { DopeColors } from "../constants";
 
 const EditorWrapper = styled.div<{ $highlight?: unknown }>`
   flex: 1;
-  margin: 16px 0px;
 
   span {
     color: ${({ $highlight }) =>

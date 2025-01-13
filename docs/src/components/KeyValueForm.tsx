@@ -18,12 +18,18 @@ const FormContainer = styled.div`
 `;
 
 const EditorsContainer = styled.div`
-  flex-direction: column;
-  margin: 20px 0px;
+  display: flex;
+  margin: 8px 0px;
+  flex-direction: row;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const ButtonGroup = styled.div`
-  margin: 0px 0px 20px 0px;
+  margin: 16px 0px;
   display: flex;
   flex: 1;
   justify-content: space-between;
@@ -131,17 +137,17 @@ function KeyValueForm() {
     (method: string) => {
       const onClick = () => handleMethodClick(method);
 
-      function getTextBasedOnMediaQuery() {
-        if (windowSize.width < 450) {
-          return `.${method}()`;
-        } else {
-          return `.${method}(${key}${method === "set" ? `, ${value}` : ""})`;
-        }
-      }
+      // function getTextBasedOnMediaQuery() {
+      //   if (windowSize.width < 450) {
+      //     return `.${method}()`;
+      //   } else {
+      //     return `.${method}(${key}${method === "set" ? `, ${value}` : ""})`;
+      //   }
+      // }
 
       return (
         <MethodButton key={method} onClick={onClick}>
-          {getTextBasedOnMediaQuery()}
+          {`.${method}()`}
         </MethodButton>
       );
     },

@@ -75,6 +75,43 @@ const dopeMap = new DopeMap(null, { hashFunction: hashIt });
 | `getKeys`    | Array of keys in order of entry                  |
 | `getValues`  | Array of values in order of entry                |
 
+## Examples
+
+#### API Cache
+
+```javascript
+import { DopeMap } from "@johnhaup/dope-map";
+
+const apiCache = new DopeMap();
+
+const filters = {
+  category: "electronics",
+  priceRange: [100, 500],
+  tags: ["sale"],
+};
+
+async function fetchProducts(query) {
+  if (apiCache.has(query)) {
+    console.log("Cache hit");
+    return apiCache.get(query);
+  }
+
+  console.log("Cache miss");
+  const response = await fetch(`/api/products?${new URLSearchParams(query)}`);
+  const data = await response.json();
+
+  apiCache.set(query, data);
+  return data;
+}
+
+await fetchProducts(filters);
+await fetchProducts({
+  priceRange: [100, 500],
+  category: "electronics",
+  tags: ["sale"],
+}); // <- Cache hit
+```
+
 ## Benchmarks
 
 _Each Dope/Map grows to the iteration size. Averages of method time are below. All times are in milliseconds._

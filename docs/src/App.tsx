@@ -2,11 +2,11 @@ import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
 import { DopeHeader } from "./components/DopeHeader";
 import { DopeMascot } from "./components/DopeMascot";
-import { GHIcon } from "./components/GHIcon";
 import { InfoModal } from "./components/InfoModal";
 import KeyValueForm from "./components/KeyValueForm";
 import MapVisualizer from "./components/MapVisualizer";
 import { useWindowSize } from "@uidotdev/usehooks";
+import { IconLinks } from "./components/IconLinks";
 
 const AppWrapper = styled.div`
   max-width: 1200px;
@@ -62,12 +62,12 @@ function App() {
             )}
             <DopeHeader />
           </div>
-          {windowSize.width > 768 && <GHIcon />}
+          {windowSize.width > 768 && <IconLinks />}
         </HeaderRow>
       </HeaderWrapperContainer>
       <KeyValueForm />
       <MapVisualizer />
-      {windowSize.width <= 768 && <GHIcon />}
+      {windowSize.width <= 768 && <IconLinks />}
       <ToastContainer
         aria-label={"toast"}
         position="bottom-right"

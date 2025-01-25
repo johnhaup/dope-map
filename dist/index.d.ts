@@ -12,7 +12,7 @@ type DopeMapConfig = {
     hashFunction?: HashFunction;
 };
 
-declare class DopeMap<K extends DopeKey, V> {
+declare class DopeMap<V, K = DopeKey> {
     private dopeMap;
     private hashKeyMap;
     private hashFunction;

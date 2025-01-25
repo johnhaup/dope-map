@@ -1,5 +1,5 @@
 import { HashedKey, MapEntry, DopeMapConfig, DopeKey } from "./types.js";
-export declare class DopeMap<K extends DopeKey, V> {
+export declare class DopeMap<V, K = DopeKey> {
     private dopeMap;
     private hashKeyMap;
     private hashFunction;

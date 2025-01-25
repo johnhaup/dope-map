@@ -6,7 +6,7 @@
 
 # dope-map
 
-A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that uses structural equality for key matching instead of the [SameValueZero algorithm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#key_equality).  This means that (for example) objects of equal but not referential value will point to the same `DopeMap` entry. This can come with a slight performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is very large take that into consideration.
+A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that uses structural equality for key matching instead of the [SameValueZero algorithm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#key_equality). This means that (for example) objects of equal but not referential value will point to the same `DopeMap` entry. This can come with a slight performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is very large take that into consideration.
 
 Ships with a hardcoded (dep-free) implementation of [fast-json-stable-stringify](https://github.com/epoberezkin/fast-json-stable-stringify) and [xxhashjs](https://github.com/pierrec/js-xxhash) as its hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
@@ -18,35 +18,12 @@ fafo [here](https://johnhaup.github.io/dope-map)
 yarn add @johnhaup/dope-map
 ```
 
-## Usage
+## Comparison
 
-```javascript
-import { DopeMap } from "@johnhaup/dope-map";
-
-const dopeMap = new DopeMap();
-
-const key1 = { foo: "bar", to: "fu" };
-const key2 = { foo: "bar", to: "fu" };
-
-dopeMap.set(key1, [1, 2, 3, 4, 5]);
-dopeMap.set(key2, "numbers");
-
-console.log(dopeMap.size); // Output: 1
-console.log(dopeMap.get(key1)); // Output: "numbers"
-console.log(dopeMap.get(key2)); // Output: "numbers" <- Same reference as above
-console.log(dopeMap.get({ to: "fu", foo: "bar" })); // Output: "numbers" <- Same reference as above
-
-// Compared to Map
-const map = new Map();
-
-map.set(key1, [1, 2, 3, 4, 5]);
-map.set(key2, "numbers");
-
-console.log(map.size); // Output: 2
-console.log(map.get(key1)); // Output: [1, 2, 3, 4, 5]
-console.log(map.get(key2)); // Output: "numbers"
-console.log(map.get({ to: "fu", foo: "bar" })); // Output: undefined
-```
+<div>
+    <img alt="dope" height=400 src="dope_demo.png">
+    <img alt="dope" height=400 src="map_demo.png">
+</div>
 
 ## API Reference
 
@@ -74,6 +51,16 @@ const dopeMap = new DopeMap(null, { hashFunction: hashIt });
 | `getEntries` | Array of `[key, value]` tuples in order of entry |
 | `getKeys`    | Array of keys in order of entry                  |
 | `getValues`  | Array of values in order of entry                |
+
+### Typescript
+
+`DopeMap's` generics are flipped from traditional `Map`:
+
+```typescript
+DopeMap<Value, Key = unknown> // Map<Key = any, Value = any>
+```
+
+Key is optional so you can just type the value and go crazy with the keys you pass.
 
 ## Examples
 
@@ -110,6 +97,60 @@ await fetchProducts({
   category: "electronics",
   tags: ["sale"],
 }); // <- Cache hit
+```
+
+#### Product Lookup
+
+```typescript
+import { DopeMap } from "@johnhaup/dope-map";
+
+type ProductAttributes = {
+  color: string;
+  size: string;
+  material: string;
+};
+
+type Product = {
+  id: string;
+  price: number;
+  promoPrice: number | null;
+  title: string;
+};
+
+const initialEntries: [ProductAttributes, Product][] = [
+  [
+    { color: "blue", size: "sm", material: "cotton" },
+    { id: "13nl54l", title: "Cool Blue", price: 24.99, promoPrice: null },
+  ],
+  [
+    { color: "blue", size: "xs", material: "cotton" },
+    { id: "909sadfj", title: "Cool Blue", price: 19.99, promoPrice: 9.99 },
+  ],
+];
+
+const productMap = new DopeMap<Product>(initialEntries);
+
+interface Props {
+  filters: Partial<ProductAttributes>;
+}
+
+function SelectedProduct({ filters }: Props) {
+  const product = useMemo(() => {
+    return productMap.get(filters);
+  }, [filters]);
+
+  if (!product) {
+    return null;
+  }
+
+  return (
+    <div>
+      <p>{product.title}</p>
+      <p>{product.price}</p>
+      <p>{product.promoPrice}</p>
+    </div>
+  );
+}
 ```
 
 ## Benchmarks

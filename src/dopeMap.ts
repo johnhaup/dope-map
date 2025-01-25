@@ -7,7 +7,7 @@ import {
   DopeKey,
 } from "./types.js";
 
-export class DopeMap<K extends DopeKey, V> {
+export class DopeMap<V, K = DopeKey> {
   private dopeMap: Map<HashedKey, MapEntry<K, V>>;
   private hashKeyMap: Map<K, HashedKey>;
 

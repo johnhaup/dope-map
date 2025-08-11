@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
 import styled from "styled-components";
-import { FiLink } from "react-icons/fi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAtom } from "jotai";
 import { keyReferenceAtom } from "../atoms/state";
 import { DopeColors } from "../constants";
+import { LinkIcon } from "./LinkIcon";
 
 const StyledMapOutput = styled.pre`
   margin: 0;
@@ -41,11 +41,6 @@ const Key = styled.strong<{
   }
 `;
 
-const LinkIcon = styled.span<{ $show: boolean }>`
-  visibility: ${({ $show }) => ($show ? "visibile" : "hidden")};
-  margin-horizontalt: 4px;
-`;
-
 interface Props {
   data: [unknown, unknown][];
   color?: string;
@@ -75,9 +70,7 @@ export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
           {index}:
           <Key onClick={onClick} $color={$color}>
             {JSON.stringify(key, null, 2)}
-            <LinkIcon $show={isLinked}>
-              <FiLink />
-            </LinkIcon>
+            <LinkIcon show={isLinked} style={{ margin: "0px 8px" }} />
           </Key>
           : {JSON.stringify(value, null, 2)}
         </Entry>

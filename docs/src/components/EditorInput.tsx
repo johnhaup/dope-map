@@ -10,6 +10,7 @@ import { parseInput } from "../utils";
 import { useSetAtom } from "jotai";
 import { keyReferenceAtom } from "../atoms/state";
 import { DopeColors } from "../constants";
+import { LinkIcon } from "./LinkIcon";
 
 const EditorWrapper = styled.div<{ $highlight?: unknown }>`
   flex: 1;
@@ -18,6 +19,17 @@ const EditorWrapper = styled.div<{ $highlight?: unknown }>`
     color: ${({ $highlight }) =>
       $highlight ? `${DopeColors.pink} !important` : undefined};
   }
+`;
+
+const EditorHeader = styled.h3<{ $highlight?: unknown }>`
+  color: ${DopeColors.blue};
+  font-size: 14px;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "Source Code Pro",
+    "source-code-pro", monospace;
+  color: ${({ $highlight }) =>
+    $highlight ? `${DopeColors.pink} !important` : undefined};
+  margin: 0;
+  display: inline-flex;
 `;
 
 interface Props {
@@ -88,13 +100,9 @@ export function EditorInput({ label, onChange, value, refValue }: Props) {
     }
   }, [value]);
 
-  const displayValue = useMemo(() => {
-    if (refValue) {
-      return `// ${label} - Reference\n${value}`;
-    }
-
-    return `// ${label}\n${value}`;
-  }, [label, value, refValue]);
+  const displayLabel = useMemo(() => {
+    return refValue ? `${label} - Reference` : label;
+  }, [label, refValue]);
 
   const onValueChange = useCallback(
     (newValue: string) => {
@@ -108,23 +116,42 @@ export function EditorInput({ label, onChange, value, refValue }: Props) {
   );
 
   return (
-    <EditorWrapper $highlight={refValue}>
-      <AceEditor
-        {...editorProps}
-        value={displayValue}
-        onChange={onValueChange}
-        ref={_editor}
-        markers={[
-          {
-            startRow: 0,
-            startCol: 0,
-            endRow: 0,
-            endCol: 100,
-            className: "readonly-marker",
-            type: "fullLine",
-          },
-        ]}
-      />
-    </EditorWrapper>
+    <div style={{ flex: 1, position: "relative" }}>
+      <EditorWrapper $highlight={refValue}>
+        <AceEditor
+          {...editorProps}
+          value={value}
+          onChange={onValueChange}
+          ref={_editor}
+          markers={[
+            {
+              startRow: 0,
+              startCol: 0,
+              endRow: 0,
+              endCol: 100,
+              className: "readonly-marker",
+              type: "fullLine",
+            },
+          ]}
+        />
+      </EditorWrapper>
+      <div
+        style={{
+          color: DopeColors.lightPink,
+          position: "absolute",
+          top: "-12px",
+          right: "12px",
+          padding: "4px 8px",
+          borderRadius: "8px",
+          backgroundColor: DopeColors.darkGray,
+          border: `1px solid ${DopeColors.offWhite}`,
+        }}
+      >
+        <EditorHeader $highlight={refValue}>
+          {displayLabel}
+          <LinkIcon show={!!refValue} style={{ margin: "0px 0px 0px 8px" }} />
+        </EditorHeader>
+      </div>
+    </div>
   );
 }

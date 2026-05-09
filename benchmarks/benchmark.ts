@@ -2,10 +2,19 @@ import Benchmark, { Target } from "benchmark";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { KEY_CONFIGS, MAP_IMPLEMENTATIONS, METHODS, SIZES } from "./constants";
-import { formatMs, roundMs } from "./utils";
+import {
+  KEY_CONFIGS,
+  MAP_IMPLEMENTATIONS,
+  METHODS,
+  SIZES,
+  REAL_WORLD_PATTERNS,
+  MapInstance,
+} from "./constants";
+import { formatMs, roundMs, formatBytes, measureMemory } from "./utils";
 
 const resultsTable: string[] = [];
+
+// --- Per-Operation Benchmarks ---
 
 KEY_CONFIGS.forEach(({ title, generateKeys }) => {
   resultsTable.push(`### ${title.toLocaleUpperCase()} keys`);
@@ -18,38 +27,60 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
     const generatedKeys = generateKeys(size);
     const testValue = "testValue";
 
-    const operationResults: Record<string, Record<string, number>> = {
-      Set: {},
-      Get: {},
-      Has: {},
-      Delete: {},
-    };
+    const operationResults: Record<string, Record<string, number>> = {};
+    METHODS.forEach((m) => (operationResults[m] = {}));
 
     MAP_IMPLEMENTATIONS.forEach(({ name, instance }) => {
-      const mapInstance = instance();
-
+      // Set: fresh map each iteration
       suite.add(`${name} - Set`, function () {
+        const m = instance();
         generatedKeys.forEach((key) => {
-          mapInstance.set(key, testValue);
+          m.set(key, testValue);
         });
       });
 
-      suite.add(`${name} - Get`, function () {
-        generatedKeys.forEach((key) => {
-          mapInstance.get(key);
-        });
+      // Get: pre-populated map, created once per cycle
+      suite.add(`${name} - Get`, {
+        fn() {
+          generatedKeys.forEach((key) => {
+            (this as unknown as { map: MapInstance }).map.get(key);
+          });
+        },
+        onStart() {
+          const m = instance();
+          generatedKeys.forEach((key) => m.set(key, testValue));
+          (this as unknown as { map: MapInstance }).map = m;
+        },
       });
 
-      suite.add(`${name} - Has`, function () {
-        generatedKeys.forEach((key) => {
-          mapInstance.has(key);
-        });
+      // Has: pre-populated map
+      suite.add(`${name} - Has`, {
+        fn() {
+          generatedKeys.forEach((key) => {
+            (this as unknown as { map: MapInstance }).map.has(key);
+          });
+        },
+        onStart() {
+          const m = instance();
+          generatedKeys.forEach((key) => m.set(key, testValue));
+          (this as unknown as { map: MapInstance }).map = m;
+        },
       });
 
+      // Delete: fresh populated map each iteration
       suite.add(`${name} - Delete`, function () {
+        const m = instance();
+        generatedKeys.forEach((key) => m.set(key, testValue));
         generatedKeys.forEach((key) => {
-          mapInstance.delete(key);
+          m.delete(key);
         });
+      });
+
+      // Clear: fresh populated map each iteration
+      suite.add(`${name} - Clear`, function () {
+        const m = instance();
+        generatedKeys.forEach((key) => m.set(key, testValue));
+        m.clear();
       });
     });
 
@@ -61,14 +92,10 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
 
         this.forEach((bench: Target) => {
           if (bench.hz && bench.name) {
-            const [name, operation] = bench.name.split(" - ");
+            const [mapName, operation] = bench.name.split(" - ");
             const avgTimeMs = (1 / bench.hz) * 1000;
 
-            if (!operationResults[operation]) {
-              operationResults[operation] = {};
-            }
-
-            operationResults[operation][name] = avgTimeMs;
+            operationResults[operation][mapName] = avgTimeMs;
 
             console.log(
               `${bench.name}: ${bench.hz.toFixed(
@@ -76,13 +103,13 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
               )} ops/sec (${avgTimeMs.toFixed(4)} ms per operation)`
             );
 
-            if (name === "Map") {
+            if (mapName === "Map") {
               baselineResults[operation] = avgTimeMs;
             }
           }
         });
 
-        resultsTable.push(`#### ${size.toLocaleString()} iterations`);
+        resultsTable.push(`#### ${size.toLocaleString()} entries`);
         resultsTable.push(`| Map | ${METHODS.join(" | ")} |`);
         resultsTable.push(
           `|-----------|${METHODS.map(() => "-----------").join("|")} |`
@@ -120,6 +147,128 @@ KEY_CONFIGS.forEach(({ title, generateKeys }) => {
   });
 });
 
+// --- Real-World Pattern Benchmarks ---
+
+resultsTable.push(`### Real-World Patterns`);
+resultsTable.push("");
+
+KEY_CONFIGS.forEach(({ title, generateKeys }) => {
+  const size = 10_000;
+  const generatedKeys = generateKeys(size);
+  const testValue = "testValue";
+
+  REAL_WORLD_PATTERNS.forEach((pattern) => {
+    console.log(
+      `\nRunning ${pattern.name} pattern (${title} keys, ${size} entries)`
+    );
+
+    const suite = new Benchmark.Suite();
+    const patternResults: Record<string, number> = {};
+
+    MAP_IMPLEMENTATIONS.forEach(({ name, instance }) => {
+      suite.add(`${name}`, {
+        fn() {
+          pattern.operations(
+            (this as unknown as { map: MapInstance }).map,
+            generatedKeys,
+            testValue
+          );
+        },
+        onStart() {
+          const m = instance();
+          generatedKeys.forEach((key) => m.set(key, testValue));
+          (this as unknown as { map: MapInstance }).map = m;
+        },
+      });
+    });
+
+    suite
+      .on("complete", function () {
+        let baselineMs = 0;
+
+        this.forEach((bench: Target) => {
+          if (bench.hz && bench.name) {
+            const avgTimeMs = (1 / bench.hz) * 1000;
+            patternResults[bench.name] = avgTimeMs;
+            if (bench.name === "Map") baselineMs = avgTimeMs;
+
+            console.log(
+              `${bench.name}: ${bench.hz.toFixed(
+                2
+              )} ops/sec (${avgTimeMs.toFixed(4)} ms)`
+            );
+          }
+        });
+
+        resultsTable.push(
+          `#### ${pattern.name} (${pattern.description}) - ${title} keys, ${size.toLocaleString()} entries`
+        );
+        resultsTable.push(`| Map | Avg Time (ms) |`);
+        resultsTable.push(`|-----------|-----------|`);
+
+        MAP_IMPLEMENTATIONS.forEach(({ name }) => {
+          const current = roundMs(patternResults[name]);
+          const diff = roundMs(patternResults[name] - baselineMs);
+          const diffString =
+            name !== "Map" && diff !== 0
+              ? ` (${diff > 0 ? "+" : ""}${formatMs(diff)})`
+              : "";
+          resultsTable.push(`| **${name}** | ${formatMs(current)}${diffString} |`);
+        });
+
+        resultsTable.push("");
+      })
+      .run({ async: false });
+  });
+});
+
+// --- Memory Benchmarks ---
+
+resultsTable.push(`### Memory Usage`);
+resultsTable.push("");
+
+console.log("\nRunning memory benchmarks...");
+
+KEY_CONFIGS.forEach(({ title, generateKeys }) => {
+  [1_000, 10_000, 100_000].forEach((size) => {
+    console.log(`\nMemory benchmark: ${size} entries with ${title} keys`);
+    const generatedKeys = generateKeys(size);
+    const testValue = "testValue";
+
+    resultsTable.push(
+      `#### ${size.toLocaleString()} entries - ${title} keys`
+    );
+    resultsTable.push(
+      `| Map | Populated | After Clear | Freed |`
+    );
+    resultsTable.push(`|-----------|-----------|-----------|-----------|`);
+
+    MAP_IMPLEMENTATIONS.forEach(({ name, instance }) => {
+      const { populated, afterClear, freed } = measureMemory(
+        () => instance(),
+        generatedKeys,
+        testValue
+      );
+
+      console.log(
+        `${name}: populated=${formatBytes(populated)}, afterClear=${formatBytes(
+          afterClear
+        )}, freed=${formatBytes(freed)}`
+      );
+
+      resultsTable.push(
+        `| **${name}** | ${formatBytes(populated)} | ${formatBytes(
+          afterClear
+        )} | ${formatBytes(freed)} |`
+      );
+    });
+
+    resultsTable.push("");
+  });
+});
+
+// --- Write results to README ---
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -135,4 +284,4 @@ const updatedReadme = readmeContent.replace(
 
 fs.writeFileSync(readmePath, updatedReadme, "utf-8");
 
-console.log("Benchmark results updated in README.md");
+console.log("\nBenchmark results updated in README.md");

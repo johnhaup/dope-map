@@ -45,17 +45,26 @@ describe("dopeHash", () => {
     expect(dopeHash(Symbol("test"))).toMatch(/^ySymbol\(test\)$/);
   });
 
-  it("hashes arrays into numbers", () => {
+  it("hashes arrays into strings", () => {
     const result = dopeHash([1, "two", true]);
-    expect(result).toBeTypeOf("number");
+    expect(result).toBeTypeOf("string");
+    expect(result).toBe('[1,"two",true]');
   });
 
-  it("hashes objects into numbers", () => {
+  it("hashes objects into stable strings", () => {
     const result = dopeHash({
       a: [1, { b: true }, "test"],
       c: { d: "value" },
     });
-    expect(result).toBeTypeOf("number");
+    expect(result).toBeTypeOf("string");
+    // Keys are sorted for stability
+    expect(result).toBe('{"a":[1,{"b":true},"test"],"c":{"d":"value"}}');
+  });
+
+  it("produces identical hashes for objects with different key order", () => {
+    const a = dopeHash({ x: 1, y: 2, z: 3 });
+    const b = dopeHash({ z: 3, x: 1, y: 2 });
+    expect(a).toBe(b);
   });
 
   it("returns 'unknown' for unsupported types", () => {

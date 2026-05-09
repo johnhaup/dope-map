@@ -1,4 +1,12 @@
-import stringify from "fast-json-stable-stringify";
+function sortKeys(obj: unknown): unknown {
+  if (obj === null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(sortKeys);
+  const sorted: Record<string, unknown> = {};
+  for (const k of Object.keys(obj).sort()) {
+    sorted[k] = sortKeys((obj as Record<string, unknown>)[k]);
+  }
+  return sorted;
+}
 
 export function dopeHash(value: unknown) {
   switch (typeof value) {
@@ -10,7 +18,7 @@ export function dopeHash(value: unknown) {
     case "undefined":
       return `${value}`;
     case "object":
-      return stringify(value);
+      return JSON.stringify(sortKeys(value));
     case "function":
       return `f${value.toString().replace(/\s+/g, "")}`;
     case "symbol":

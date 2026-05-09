@@ -4,6 +4,15 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
+    environmentMatchGlobs: [
+      ["__tests__/useDopeMap.test.ts", "jsdom"],
+    ],
+    pool: "forks",
+    poolOptions: {
+      forks: {
+        execArgv: ["--expose-gc"],
+      },
+    },
     testTransformMode: {
       web: [".js"],
     },

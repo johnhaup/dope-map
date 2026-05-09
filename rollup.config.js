@@ -4,7 +4,7 @@ import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import { dts } from "rollup-plugin-dts";
 
-const plugins = [
+const basePlugins = (tsOptions = {}) => [
   resolve({
     extensions: [".ts", ".js"],
     preferBuiltins: false, // Include dependencies in the bundle
@@ -12,10 +12,7 @@ const plugins = [
   commonjs(),
   typescript({
     tsconfig: "./tsconfig.json",
-    declaration: true,
-    emitDeclarationOnly: false,
-    rootDir: "./src",
-    outDir: "./dist",
+    ...tsOptions,
   }),
   terser(),
 ];
@@ -29,8 +26,30 @@ export default [
       format: "esm",
       sourcemap: true,
     },
-    plugins,
+    plugins: basePlugins({
+      declaration: true,
+      emitDeclarationOnly: false,
+      rootDir: "./src",
+      outDir: "./dist",
+    }),
     external: [], // Bundle everything into one file
+    treeshake: {
+      moduleSideEffects: false,
+    },
+  },
+
+  // React ESM Build
+  {
+    input: "src/react/index.ts",
+    output: {
+      file: "dist/react/index.js",
+      format: "esm",
+      sourcemap: true,
+    },
+    plugins: basePlugins({
+      declaration: false,
+    }),
+    external: ["react"],
     treeshake: {
       moduleSideEffects: false,
     },
@@ -41,6 +60,16 @@ export default [
     input: "src/index.ts",
     output: {
       file: "dist/index.d.ts",
+      format: "esm",
+    },
+    plugins: [dts()],
+  },
+
+  // React Type Declarations
+  {
+    input: "src/react/index.ts",
+    output: {
+      file: "dist/react/index.d.ts",
       format: "esm",
     },
     plugins: [dts()],

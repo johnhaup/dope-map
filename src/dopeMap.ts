@@ -57,7 +57,6 @@ export class DopeMap<V, K = DopeKey> {
 
   set(k: K, v: V) {
     const hashedKey = this.getHashedKey(k);
-    this.hashKeyMap.set(k, hashedKey);
     return this.dopeMap.set(hashedKey, { k, v });
   }
 

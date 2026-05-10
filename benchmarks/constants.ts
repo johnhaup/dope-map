@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import hashIt from "hash-it";
 import { DopeMap } from "../src";
-import DopeMapV1 from "../src/v1";
 import { generateMixedKeys, generatePrimitiveKeys } from "./utils";
 
 export const SIZES = [100, 1_000, 10_000, 100_000];
@@ -30,7 +29,6 @@ export const MAP_IMPLEMENTATIONS = [
     instance: () =>
       new DopeMap<unknown, string>(null, { hashFunction: hashIt }),
   },
-  { name: "DopeMap V1", instance: () => new DopeMapV1<string>() },
 ];
 
 export type MapInstance = ReturnType<

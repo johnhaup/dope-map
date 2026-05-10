@@ -21,7 +21,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build Project
-        run: npm run build
+        run: bun run build
 
       - name: Run Semantic Release
         env:

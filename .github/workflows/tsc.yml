@@ -18,4 +18,4 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: TypeScript Check
-        run: npx tsc --noEmit
+        run: bun run tsc --noEmit

@@ -18,4 +18,4 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Lint
-        run: npm run lint
+        run: bun run lint

@@ -18,8 +18,15 @@ export function dopeHash(value: unknown) {
     case "boolean":
     case "undefined":
       return `${value}`;
-    case "object":
-      return JSON.stringify(sortKeys(value));
+    case "object": {
+      const str = JSON.stringify(sortKeys(value));
+      let hash = 0x811c9dc5;
+      for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash = (hash * 0x01000193) | 0;
+      }
+      return hash >>> 0;
+    }
     case "function":
       return `f${value.toString().replace(/\s+/g, "")}`;
     case "symbol":

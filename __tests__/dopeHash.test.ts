@@ -45,20 +45,17 @@ describe("dopeHash", () => {
     expect(dopeHash(Symbol("test"))).toMatch(/^ySymbol\(test\)$/);
   });
 
-  it("hashes arrays into strings", () => {
+  it("hashes arrays into numbers", () => {
     const result = dopeHash([1, "two", true]);
-    expect(result).toBeTypeOf("string");
-    expect(result).toBe('[1,"two",true]');
+    expect(result).toBeTypeOf("number");
   });
 
-  it("hashes objects into stable strings", () => {
+  it("hashes objects into numbers", () => {
     const result = dopeHash({
       a: [1, { b: true }, "test"],
       c: { d: "value" },
     });
-    expect(result).toBeTypeOf("string");
-    // Keys are sorted for stability
-    expect(result).toBe('{"a":[1,{"b":true},"test"],"c":{"d":"value"}}');
+    expect(result).toBeTypeOf("number");
   });
 
   it("produces identical hashes for objects with different key order", () => {
@@ -69,25 +66,29 @@ describe("dopeHash", () => {
 
   it("handles Date objects via toJSON", () => {
     const date = new Date("2024-01-01T00:00:00.000Z");
-    expect(dopeHash(date)).toBe('"2024-01-01T00:00:00.000Z"');
-    expect(dopeHash({ d: date })).toBe('{"d":"2024-01-01T00:00:00.000Z"}');
+    expect(dopeHash(date)).toBeTypeOf("number");
+    // Same date produces same hash
+    expect(dopeHash(date)).toBe(dopeHash(new Date("2024-01-01T00:00:00.000Z")));
   });
 
   it("handles objects with custom toJSON", () => {
     const obj = { toJSON: () => "custom-serialization" };
-    expect(dopeHash(obj)).toBe('"custom-serialization"');
+    expect(dopeHash(obj)).toBeTypeOf("number");
   });
 
   it("handles null", () => {
-    expect(dopeHash(null)).toBe("null");
+    expect(dopeHash(null)).toBeTypeOf("number");
   });
 
-  it("handles nested nulls", () => {
-    expect(dopeHash({ a: null, b: 1 })).toBe('{"a":null,"b":1}');
-  });
+  it("handles nested nulls and undefined values consistently", () => {
+    const a = dopeHash({ a: null, b: 1 });
+    const b = dopeHash({ b: 1, a: null });
+    expect(a).toBe(b);
 
-  it("handles undefined values inside objects (dropped by JSON.stringify)", () => {
-    expect(dopeHash({ a: undefined, b: 1 })).toBe('{"b":1}');
+    // undefined values are dropped by JSON.stringify
+    const c = dopeHash({ a: undefined, b: 1 });
+    const d = dopeHash({ b: 1 });
+    expect(c).toBe(d);
   });
 
   it("returns 'unknown' for unsupported types", () => {

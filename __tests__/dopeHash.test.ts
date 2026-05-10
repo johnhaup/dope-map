@@ -67,6 +67,29 @@ describe("dopeHash", () => {
     expect(a).toBe(b);
   });
 
+  it("handles Date objects via toJSON", () => {
+    const date = new Date("2024-01-01T00:00:00.000Z");
+    expect(dopeHash(date)).toBe('"2024-01-01T00:00:00.000Z"');
+    expect(dopeHash({ d: date })).toBe('{"d":"2024-01-01T00:00:00.000Z"}');
+  });
+
+  it("handles objects with custom toJSON", () => {
+    const obj = { toJSON: () => "custom-serialization" };
+    expect(dopeHash(obj)).toBe('"custom-serialization"');
+  });
+
+  it("handles null", () => {
+    expect(dopeHash(null)).toBe("null");
+  });
+
+  it("handles nested nulls", () => {
+    expect(dopeHash({ a: null, b: 1 })).toBe('{"a":null,"b":1}');
+  });
+
+  it("handles undefined values inside objects (dropped by JSON.stringify)", () => {
+    expect(dopeHash({ a: undefined, b: 1 })).toBe('{"b":1}');
+  });
+
   it("returns 'unknown' for unsupported types", () => {
     expect(dopeHash(BigInt(9007199254740991))).toBe("unknown");
   });

@@ -1,8 +1,9 @@
 function sortKeys(obj: unknown): unknown {
   if (obj === null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(sortKeys);
+  if ("toJSON" in (obj as object)) return obj;
   const sorted: Record<string, unknown> = {};
-  for (const k of Object.keys(obj).sort()) {
+  for (const k of Object.keys(obj as Record<string, unknown>).sort()) {
     sorted[k] = sortKeys((obj as Record<string, unknown>)[k]);
   }
   return sorted;

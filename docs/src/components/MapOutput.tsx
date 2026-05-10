@@ -60,7 +60,7 @@ export const MapOutput = ({ data, color = DopeColors.blue }: Props) => {
           setKeyReference(undefined);
           toast(`Cleared reference!`);
         } else {
-          setKeyReference(key);
+          setKeyReference(key as string);
           toast(`Copied key reference to key input!`);
         }
       };

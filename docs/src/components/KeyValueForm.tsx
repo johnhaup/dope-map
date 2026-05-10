@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
 import styled from "styled-components";
 import { toast } from "react-toastify";
@@ -74,6 +74,12 @@ function KeyValueForm() {
   const setKeyValue = useSetAtom(handleMapSetAtom);
   const handleKeyMapMethod = useSetAtom(handleKeyMapMethodAtom);
   const [keyReference, setKeyReference] = useAtom(keyReferenceAtom);
+
+  useEffect(() => {
+    if (keyReference) {
+      setKey(keyReference);
+    }
+  }, [keyReference, setKey]);
 
   const handleResult = useCallback(
     (type: string, result: any, errorValue: any) => {

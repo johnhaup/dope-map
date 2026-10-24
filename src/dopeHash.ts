@@ -20,12 +20,18 @@ export function dopeHash(value: unknown) {
       return `${value}`;
     case "object": {
       const str = JSON.stringify(sortKeys(value));
-      let hash = 0x811c9dc5;
+      // Two independent 32-bit FNV-1a style lanes combined into one 53-bit
+      // integer. Math.imul keeps the multiply in int32 (the plain `*` version
+      // overflowed 2^53 and silently dropped low bits), and 53 bits makes
+      // collisions negligible at 100k+ entries where 32 bits were not.
+      let h1 = 0x811c9dc5;
+      let h2 = 0x9747b28c;
       for (let i = 0; i < str.length; i++) {
-        hash ^= str.charCodeAt(i);
-        hash = (hash * 0x01000193) | 0;
+        const c = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ c, 0x01000193);
+        h2 = Math.imul(h2 ^ c, 0x5bd1e995);
       }
-      return hash >>> 0;
+      return (h1 >>> 0) * 0x200000 + (h2 >>> 11);
     }
     case "function":
       return `f${value.toString().replace(/\s+/g, "")}`;

@@ -8,7 +8,7 @@
 
 A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that uses structural equality for key matching instead of the [SameValueZero algorithm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#key_equality). This means that (for example) objects of equal but not referential value will point to the same `DopeMap` entry. This can come with a slight performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is very large take that into consideration.
 
-Ships with a hardcoded (dep-free) implementation of [fast-json-stable-stringify](https://github.com/epoberezkin/fast-json-stable-stringify) and [xxhashjs](https://github.com/pierrec/js-xxhash) as its hashing function. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
+Ships with a dep-free hashing function: keys are serialized with stable (sorted) JSON and reduced to a 53-bit [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function)-style integer. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
 fafo [here](https://johnhaup.github.io/dope-map)
 
@@ -162,132 +162,132 @@ _Each Dope/Map grows to the iteration size. Averages of method time are below. A
 #### 100 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.002 | 0.001 | 0.001 | 0.003 | 0.002 |
-| **DopeMap** | 0.073 (+0.071) | 0.003 (+0.002) | 0.002 (+0.002) | 0.077 (+0.073) | 0.074 (+0.072) |
-| **DopeMap w/hash-it** | 0.059 (+0.057) | 0.003 (+0.003) | 0.002 (+0.002) | 0.062 (+0.059) | 0.062 (+0.060) |
+| **Map** | 0.005 | 0.001 | 0.001 | 0.005 | 0.005 |
+| **DopeMap** | 0.069 (+0.064) | 0.005 (+0.004) | 0.003 (+0.002) | 0.131 (+0.126) | 0.099 (+0.094) |
+| **DopeMap w/hash-it** | 0.065 (+0.061) | 0.004 (+0.003) | 0.003 (+0.002) | 0.092 (+0.087) | 0.092 (+0.087) |
 
 #### 1,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.020 | 0.007 | 0.007 | 0.034 | 0.019 |
-| **DopeMap** | 0.764 (+0.744) | 0.036 (+0.029) | 0.021 (+0.014) | 0.828 (+0.794) | 0.771 (+0.751) |
-| **DopeMap w/hash-it** | 0.594 (+0.574) | 0.042 (+0.035) | 0.021 (+0.015) | 0.639 (+0.605) | 0.595 (+0.576) |
+| **Map** | 0.024 | 0.016 | 0.012 | 0.051 | 0.024 |
+| **DopeMap** | 0.581 (+0.558) | 0.058 (+0.042) | 0.030 (+0.018) | 0.569 (+0.519) | 0.584 (+0.559) |
+| **DopeMap w/hash-it** | 0.711 (+0.688) | 0.053 (+0.037) | 0.026 (+0.014) | 0.656 (+0.606) | 0.606 (+0.581) |
 
 #### 10,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.268 | 0.055 | 0.055 | 0.500 | 0.265 |
-| **DopeMap** | 8.0 (+7.7) | 0.616 (+0.561) | 0.252 (+0.197) | 8.8 (+8.3) | 8.0 (+7.7) |
-| **DopeMap w/hash-it** | 6.1 (+5.8) | 0.599 (+0.543) | 0.250 (+0.195) | 6.9 (+6.4) | 6.1 (+5.9) |
+| **Map** | 0.275 | 0.072 | 0.072 | 0.507 | 0.299 |
+| **DopeMap** | 5.2 (+4.9) | 0.604 (+0.531) | 0.283 (+0.212) | 6.7 (+6.2) | 6.0 (+5.7) |
+| **DopeMap w/hash-it** | 7.3 (+7.0) | 0.725 (+0.653) | 0.321 (+0.250) | 8.1 (+7.6) | 6.8 (+6.5) |
 
 #### 100,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 4.0 | 0.550 | 0.541 | 7.2 | 4.0 |
-| **DopeMap** | 95.5 (+91.5) | 6.5 (+6.0) | 2.4 (+1.9) | 104.7 (+97.6) | 95.3 (+91.3) |
-| **DopeMap w/hash-it** | 77.6 (+73.6) | 7.4 (+6.9) | 2.4 (+1.9) | 94.1 (+87.0) | 1010.7 (+1006.7) |
+| **Map** | 4.1 | 0.840 | 0.768 | 7.5 | 4.4 |
+| **DopeMap** | 79.1 (+74.9) | 7.8 (+7.0) | 3.0 (+2.3) | 93.8 (+86.3) | 69.7 (+65.3) |
+| **DopeMap w/hash-it** | 79.7 (+75.5) | 6.4 (+5.6) | 2.7 (+1.9) | 89.6 (+82.1) | 83.2 (+78.8) |
 
 ### PRIMITIVES keys
 #### 100 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.002 | 0.001 | 0.001 | 0.003 | 0.002 |
-| **DopeMap** | 0.002 | 0.001 (+0.001) | 0.001 | 0.004 | 0.002 |
-| **DopeMap w/hash-it** | 0.002 | 0.001 (+0.001) | 0.001 | 0.004 (+0.001) | 0.002 |
+| **Map** | 0.003 | 0.001 | 0.001 | 0.005 | 0.003 |
+| **DopeMap** | 0.003 (+0.001) | 0.003 (+0.002) | 0.002 (+0.001) | 0.008 (+0.003) | 0.006 (+0.003) |
+| **DopeMap w/hash-it** | 0.011 (+0.008) | 0.010 (+0.009) | 0.005 (+0.004) | 0.025 (+0.020) | 0.012 (+0.009) |
 
 #### 1,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.023 | 0.009 | 0.009 | 0.044 | 0.022 |
-| **DopeMap** | 0.025 (+0.002) | 0.021 (+0.012) | 0.009 | 0.053 (+0.008) | 0.026 (+0.004) |
-| **DopeMap w/hash-it** | 0.026 (+0.003) | 0.023 (+0.014) | 0.010 (+0.001) | 0.051 (+0.007) | 0.026 (+0.003) |
+| **Map** | 0.127 | 0.034 | 0.026 | 0.097 | 0.042 |
+| **DopeMap** | 0.069 (-0.058) | 0.097 (+0.063) | 0.035 (+0.009) | 0.215 (+0.118) | 0.123 (+0.081) |
+| **DopeMap w/hash-it** | 0.135 (+0.008) | 0.206 (+0.172) | 0.037 (+0.012) | 0.224 (+0.127) | 0.101 (+0.059) |
 
 #### 10,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 0.514 | 0.056 | 0.054 | 0.883 | 0.513 |
-| **DopeMap** | 0.557 (+0.042) | 0.270 (+0.214) | 0.065 (+0.011) | 0.947 (+0.064) | 0.548 (+0.035) |
-| **DopeMap w/hash-it** | 0.556 (+0.042) | 0.271 (+0.215) | 0.065 (+0.011) | 0.948 (+0.065) | 0.577 (+0.064) |
+| **Map** | 2.0 | 0.328 | 0.307 | 3.1 | 1.9 |
+| **DopeMap** | 1.9 (-0.108) | 1.2 (+0.864) | 0.458 (+0.151) | 4.2 (+1.1) | 2.3 (+0.448) |
+| **DopeMap w/hash-it** | 2.3 (+0.255) | 1.5 (+1.2) | 0.440 (+0.132) | 4.1 (+1.0) | 2.6 (+0.763) |
 
 #### 100,000 entries
 | Map | Set | Get | Has | Delete | Clear |
 |-----------|-----------|-----------|-----------|-----------|----------- |
-| **Map** | 6.8 | 3.2 | 2.9 | 11.3 | 6.1 |
-| **DopeMap** | 7.2 (+0.395) | 3.9 (+0.742) | 3.4 (+0.533) | 12.8 (+1.5) | 6.7 (+0.540) |
-| **DopeMap w/hash-it** | 6.9 (+0.061) | 3.8 (+0.637) | 3.5 (+0.652) | 11.8 (+0.495) | 6.7 (+0.615) |
+| **Map** | 35.2 | 3.8 | 4.2 | 55.2 | 26.6 |
+| **DopeMap** | 26.0 (-9.1) | 15.5 (+11.6) | 2.1 (-2.1) | 41.3 (-13.9) | 27.7 (+1.1) |
+| **DopeMap w/hash-it** | 33.7 (-1.4) | 22.8 (+19.0) | 3.6 (-0.594) | 62.1 (+6.9) | 21.4 (-5.2) |
 
 ### Real-World Patterns
 
 #### Read-Heavy (70% Get, 20% Set, 5% Has, 5% Delete) - objects keys, 10,000 entries
 | Map | Avg Time (ms) |
 |-----------|-----------|
-| **Map** | 0.098 |
-| **DopeMap** | 0.630 (+0.532) |
-| **DopeMap w/hash-it** | 0.570 (+0.472) |
+| **Map** | 0.419 |
+| **DopeMap** | 2.3 (+1.9) |
+| **DopeMap w/hash-it** | 1.9 (+1.4) |
 
 #### Write-Heavy (50% Set, 30% Get, 10% Has, 10% Delete) - objects keys, 10,000 entries
 | Map | Avg Time (ms) |
 |-----------|-----------|
-| **Map** | 0.146 |
-| **DopeMap** | 0.682 (+0.536) |
-| **DopeMap w/hash-it** | 0.621 (+0.474) |
+| **Map** | 0.496 |
+| **DopeMap** | 2.2 (+1.7) |
+| **DopeMap w/hash-it** | 1.2 (+0.662) |
 
 #### Read-Heavy (70% Get, 20% Set, 5% Has, 5% Delete) - primitives keys, 10,000 entries
 | Map | Avg Time (ms) |
 |-----------|-----------|
-| **Map** | 0.136 |
-| **DopeMap** | 0.217 (+0.081) |
-| **DopeMap w/hash-it** | 0.227 (+0.091) |
+| **Map** | 1.1 |
+| **DopeMap** | 1.2 (+0.106) |
+| **DopeMap w/hash-it** | 0.816 (-0.273) |
 
 #### Write-Heavy (50% Set, 30% Get, 10% Has, 10% Delete) - primitives keys, 10,000 entries
 | Map | Avg Time (ms) |
 |-----------|-----------|
-| **Map** | 0.169 |
-| **DopeMap** | 0.273 (+0.103) |
-| **DopeMap w/hash-it** | 0.260 (+0.090) |
+| **Map** | 0.491 |
+| **DopeMap** | 0.683 (+0.192) |
+| **DopeMap w/hash-it** | 0.767 (+0.276) |
 
 ### Memory Usage
 
 #### 1,000 entries - objects keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | -94.7 KB | -121.7 KB | 27.0 KB |
-| **DopeMap** | 98.5 KB | 6.3 KB | 92.2 KB |
-| **DopeMap w/hash-it** | 97.6 KB | 816 B | 96.8 KB |
+| **Map** | -133.2 KB | -161.0 KB | 27.8 KB |
+| **DopeMap** | 103.2 KB | -1.2 KB | 104.4 KB |
+| **DopeMap w/hash-it** | 97.7 KB | 1.0 KB | 96.7 KB |
 
 #### 10,000 entries - objects keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | 224.0 KB | 1.7 KB | 222.3 KB |
-| **DopeMap** | 882.5 KB | 83.2 KB | 799.3 KB |
+| **Map** | 222.9 KB | -488 B | 223.3 KB |
+| **DopeMap** | 939.0 KB | 80.8 KB | 858.2 KB |
 | **DopeMap w/hash-it** | 860.0 KB | 2.2 KB | 857.8 KB |
 
 #### 100,000 entries - objects keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | 3.50 MB | -3.5 KB | 3.50 MB |
-| **DopeMap** | 11.20 MB | 787.0 KB | 10.43 MB |
-| **DopeMap w/hash-it** | 11.01 MB | 6.0 KB | 11.01 MB |
+| **Map** | 3.50 MB | -1.0 KB | 3.50 MB |
+| **DopeMap** | 11.77 MB | 786.7 KB | 11.01 MB |
+| **DopeMap w/hash-it** | 11.01 MB | 3.9 KB | 11.01 MB |
 
 #### 1,000 entries - primitives keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | 23.5 KB | -2.9 KB | 26.4 KB |
-| **DopeMap** | 67.7 KB | 896 B | 66.9 KB |
-| **DopeMap w/hash-it** | 67.5 KB | 576 B | 66.9 KB |
+| **Map** | 24.6 KB | -3.2 KB | 27.8 KB |
+| **DopeMap** | 67.5 KB | 4.3 KB | 63.2 KB |
+| **DopeMap w/hash-it** | 66.2 KB | 2.9 KB | 63.3 KB |
 
 #### 10,000 entries - primitives keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | 449.3 KB | 1.3 KB | 447.9 KB |
-| **DopeMap** | 842.2 KB | 3.7 KB | 838.4 KB |
-| **DopeMap w/hash-it** | 839.4 KB | 2.1 KB | 837.3 KB |
+| **Map** | 446.4 KB | -1.6 KB | 447.9 KB |
+| **DopeMap** | 842.9 KB | 4.5 KB | 838.4 KB |
+| **DopeMap w/hash-it** | 841.3 KB | 2.8 KB | 838.4 KB |
 
 #### 100,000 entries - primitives keys
 | Map | Populated | After Clear | Freed |
 |-----------|-----------|-----------|-----------|
-| **Map** | 3.50 MB | -280 B | 3.50 MB |
-| **DopeMap** | 7.32 MB | 4.3 KB | 7.31 MB |
-| **DopeMap w/hash-it** | 7.32 MB | 3.0 KB | 7.31 MB |
+| **Map** | 3.50 MB | -160 B | 3.50 MB |
+| **DopeMap** | 7.32 MB | 4.2 KB | 7.31 MB |
+| **DopeMap w/hash-it** | 7.32 MB | 4.1 KB | 7.31 MB |
 
 <!-- BENCHMARK RESULTS END -->

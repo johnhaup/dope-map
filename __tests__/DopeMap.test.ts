@@ -171,3 +171,38 @@ describe.each([
     expect(values[1]).toBe(nirvanaValue);
   });
 });
+
+describe("reference cache", () => {
+  it("does not serve a deleted entry through a cached reference", () => {
+    const m = new DopeMap<string>();
+    const a = { id: 1 };
+    const b = { id: 1 };
+    m.set(a, "x");
+    expect(m.get(b)).toBe("x");
+    m.delete(b);
+    expect(m.has(a)).toBe(false);
+    expect(m.get(a)).toBeUndefined();
+    m.set(a, "y");
+    expect(m.get(b)).toBe("y");
+    expect(m.size).toBe(1);
+  });
+
+  it("forgets cached references after clear", () => {
+    const m = new DopeMap<string>();
+    const a = { id: 1 };
+    m.set(a, "x");
+    m.clear();
+    expect(m.has(a)).toBe(false);
+    m.set(a, "z");
+    expect(m.getEntries()).toEqual([[a, "z"]]);
+  });
+
+  it("keeps insertion order across primitive and object keys", () => {
+    const m = new DopeMap<number>();
+    m.set("a", 1);
+    m.set({ k: 1 }, 2);
+    m.set(3, 3);
+    expect(m.getValues()).toEqual([1, 2, 3]);
+    expect(m.getKeys()).toEqual(["a", { k: 1 }, 3]);
+  });
+});

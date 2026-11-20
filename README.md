@@ -8,7 +8,7 @@
 
 A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) that uses structural equality for key matching instead of the [SameValueZero algorithm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#key_equality). This means that (for example) objects of equal but not referential value will point to the same `DopeMap` entry. This can come with a slight performance tradeoff (see [Benchmarks](#benchmarks)), so if your dataset is very large take that into consideration.
 
-Ships with a dep-free hashing function: keys are serialized with stable (sorted) JSON and reduced to a 53-bit [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function)-style integer. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
+Ships with a dep-free hashing function: keys are walked once with sorted object keys (JSON semantics, no intermediate string) and streamed into a 53-bit [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function)-style integer. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
 fafo [here](https://johnhaup.github.io/dope-map)
 

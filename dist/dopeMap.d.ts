@@ -1,14 +1,15 @@
-import { HashedKey, MapEntry, DopeMapConfig, DopeKey } from "./types.js";
+import { DopeMapConfig, DopeKey } from "./types.js";
 export declare class DopeMap<V, K = DopeKey> {
     private dopeMap;
-    private hashKeyMap;
+    private refs;
+    private mixed;
     private hashFunction;
     constructor(entries?: Iterable<[K, V]> | null, config?: DopeMapConfig);
     private handleConfig;
-    private isPrimitiveKey;
-    private getHashedKey;
-    set(k: K, v: V): Map<HashedKey, MapEntry<K, V>>;
+    private findRef;
+    set(k: K, v: V): this;
     get(k: K): V | undefined;
+    private getRef;
     has(k: K): boolean;
     delete(k: K): boolean;
     get size(): number;
@@ -16,8 +17,8 @@ export declare class DopeMap<V, K = DopeKey> {
     entries(): IterableIterator<[K, V]>;
     getEntries(): [K, V][];
     forEach(callback: (value: V, key: K, map: this) => void): void;
-    keys(): Generator<K, void, unknown>;
+    keys(): IterableIterator<K>;
     getKeys(): K[];
-    values(): Generator<V, void, unknown>;
+    values(): IterableIterator<V>;
     getValues(): V[];
 }

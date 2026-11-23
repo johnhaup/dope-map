@@ -10,7 +10,19 @@ A wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 
 Ships with a dep-free hashing function: keys are walked once with sorted object keys (JSON semantics, no intermediate string) and streamed into a 53-bit [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function)-style integer. You can supply a different hashing function in DopeMap's config (as long as it returns a `string` or `number`).
 
-fafo [here](https://johnhaup.github.io/dope-map)
+## Try it live
+
+<div align="center">
+  <a href="https://johnhaup.github.io/dope-map">
+    <img alt="Open the live playground" src="https://img.shields.io/badge/fafo-live%20playground-4fa3d1?style=for-the-badge">
+  </a>
+  <br><br>
+  <a href="https://johnhaup.github.io/dope-map">
+    <img alt="The DopeMap playground: the same key set three times keeps one DopeMap entry and three Map entries" width=700 src="demo_site.png">
+  </a>
+</div>
+
+Run the same calls on a `Map` and a `DopeMap` side by side, race them against `JSON.stringify` keys, and try the `useDopeMap` hook, all in your browser: **[johnhaup.github.io/dope-map](https://johnhaup.github.io/dope-map)**
 
 ## Installation
 

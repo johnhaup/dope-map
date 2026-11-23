@@ -1,52 +1,27 @@
 {
-  "name": "docs",
-  "version": "0.1.0",
+  "name": "dope-map-docs",
   "private": true,
-  "homepage": "https://johnhaup.github.io/dope-map",
-  "dependencies": {
-    "@johnhaup/dope-map": "^2.1.1",
-    "@uidotdev/usehooks": "^2.4.1",
-    "ace-builds": "^1.37.1",
-    "cra-template-typescript": "1.2.0",
-    "hash-it": "^6.0.0",
-    "jotai": "^2.10.4",
-    "react": "^18.0.0",
-    "react-ace": "^13.0.0",
-    "react-ascii-text": "^0.0.4",
-    "react-dom": "^18.0.0",
-    "react-icons": "^5.4.0",
-    "react-modal": "^3.16.3",
-    "react-scripts": "5.0.1",
-    "react-toastify": "^11.0.2",
-    "styled-components": "^6.1.13"
-  },
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "ace-builds": "^1.45.2",
+    "json5": "^2.2.3",
+    "react": "^19",
+    "react-ace": "^15.0.0",
+    "react-ascii-text": "^0.0.6",
+    "react-dom": "^19",
+    "react-icons": "^5.7.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.4",
-    "gh-pages": "^6.2.0"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^5",
+    "vite": "^8.3.8"
   }
 }

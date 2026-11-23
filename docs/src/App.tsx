@@ -1,84 +1,44 @@
-import { ToastContainer } from "react-toastify";
-import styled from "styled-components";
-import { DopeHeader } from "./components/DopeHeader";
-import { DopeMascot } from "./components/DopeMascot";
-import { InfoModal } from "./components/InfoModal";
-import KeyValueForm from "./components/KeyValueForm";
-import MapVisualizer from "./components/MapVisualizer";
-import { useWindowSize } from "@uidotdev/usehooks";
-import { IconLinks } from "./components/IconLinks";
+import { Header } from "./components/Header";
+import { WelcomeDialog } from "./components/WelcomeDialog";
+import { Playground } from "./components/Playground";
+import { SpeedRace } from "./components/SpeedRace";
+import { HookDemo } from "./components/HookDemo";
+import { CopyButton } from "./components/CopyButton";
+import { useRef } from "react";
 
-const AppWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 24px 16px 24px;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
+const INSTALL = "npm i @johnhaup/dope-map";
 
-  @media (max-width: 768px) {
-    padding: 16px 24px 16px 24px;
-  }
-`;
-
-const HeaderRow = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const HeaderWrapperContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  gap: 20px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0px;
-    margin-bottom: 20px;
-  }
-`;
-
-function App() {
-  const windowSize = useWindowSize();
+export function App() {
+  const welcome = useRef<HTMLDialogElement>(null);
 
   return (
-    <AppWrapper>
-      <InfoModal />
-      <HeaderWrapperContainer>
-        <HeaderRow>
-          <div style={{ display: "flex" }}>
-            {windowSize.width > 768 && (
-              <DopeMascot
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "8px",
-                  margin: "8px 16px 8px 0px",
-                }}
-              />
-            )}
-            <DopeHeader />
-          </div>
-          {windowSize.width > 768 && <IconLinks />}
-        </HeaderRow>
-      </HeaderWrapperContainer>
-      <KeyValueForm />
-      <MapVisualizer />
-      {windowSize.width <= 768 && <IconLinks />}
-      <ToastContainer
-        aria-label={"toast"}
-        position="bottom-right"
-        autoClose={2500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        theme="light"
-      />
-    </AppWrapper>
+    <div className="page">
+      <WelcomeDialog ref={welcome} />
+      <Header onInfo={() => welcome.current?.showModal()} />
+
+      <section className="intro">
+        <p className="lede">
+          A <code>Map</code> that matches keys by <em>value</em>, not by
+          reference. Two objects that look the same are the same key, whatever
+          order their properties are in.
+        </p>
+        <div className="install">
+          <code>{INSTALL}</code>
+          <CopyButton text={INSTALL} label="Copy install command" />
+        </div>
+      </section>
+
+      <Playground />
+      <SpeedRace />
+      <HookDemo />
+
+      <footer className="footer">
+        <a href="https://github.com/johnhaup/dope-map">GitHub</a>
+        <span aria-hidden>·</span>
+        <a href="https://www.npmjs.com/package/@johnhaup/dope-map">npm</a>
+        <span aria-hidden>·</span>
+        <span>stay dope.</span>
+      </footer>
+    </div>
   );
 }
-
-export default App;

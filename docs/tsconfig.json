@@ -1,13 +1,22 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "types": ["vite/client"],
     "paths": {
-      "*": ["*", "*.tsx", "*.ts"]
+      "@johnhaup/dope-map": ["../src/index.ts"],
+      "@johnhaup/dope-map/react": ["../src/react/index.ts"],
+      "@johnhaup/dope-map/hash": ["../src/dopeHash.ts"],
+      "react": ["./node_modules/@types/react"],
+      "react/*": ["./node_modules/@types/react/*"]
     }
-  }
+  },
+  "include": ["src", "vite.config.ts"]
 }

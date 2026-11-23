@@ -37,7 +37,7 @@ export function App() {
         <span aria-hidden>·</span>
         <a href="https://www.npmjs.com/package/@johnhaup/dope-map">npm</a>
         <span aria-hidden>·</span>
-        <span>stay dope.</span>
+        <span>stay dopey.</span>
       </footer>
     </div>
   );
